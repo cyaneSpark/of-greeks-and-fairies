@@ -13,17 +13,14 @@ namespace Fairies.Dev
             hands.Add(Actor.grandma, hand_grandma);
             hands.Add(Actor.doctor, hand_doctor);
             hands.Add(Actor.priest, hand_priest);
-        }
 
-        public Func<Actor, Item, bool?> TryDeliver { get; set; }
-
-        public void ToggleActor(Actor actor, bool on)
-        {
-            hands[actor].SetActive(on);
-            LogInfo("Toggled {0} -> {1}", actor, on ? "ON" : "OFF");
+            foreach (GameObject gO in hands.Values)
+                gO.SetActive(false);
         }
 
         public Item dummyItem;
+
+        public event EventHandler<IInteractionManager.DeliveryArgs> onTryToDeliver;
 
         private void Update()
         {
@@ -33,6 +30,28 @@ namespace Fairies.Dev
                 TryDeliver(Actor.doctor, dummyItem);
             else if (Input.GetKeyUp(KeyCode.P))
                 TryDeliver(Actor.priest, dummyItem);
+        }
+
+        private void TryDeliver(Actor actor, Item item) =>
+            onTryToDeliver?.Invoke(this, new IInteractionManager.DeliveryArgs(actor, item));
+        public void HandleActorMotion(Actor actor, IInteractionManager.ActorMotion motion)
+        {
+            switch (motion)
+            {
+                case IInteractionManager.ActorMotion.Appear:
+                    LogInfo("ANIMATE {0} APPEAR", actor);
+                    hands[actor].SetActive(true);
+                    break;
+                case IInteractionManager.ActorMotion.Reject:
+                    LogInfo("ANIMATE {0} REJECT", actor);
+                    break;
+                case IInteractionManager.ActorMotion.Disappear:
+                    LogInfo("ANIMATE {0} DISAPPEAR", actor);
+                    hands[actor].SetActive(false);
+                    break;
+                default:
+                    break;
+            }
         }
     }
 }

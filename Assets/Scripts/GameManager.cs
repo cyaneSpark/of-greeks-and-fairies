@@ -8,8 +8,22 @@ namespace Fairies
 {
     public interface IInteractionManager
     {
-        void ToggleActor(Actor actor, bool on);
-        Func<Actor, Item, bool?> TryDeliver { get; set; }
+        void HandleActorMotion(Actor actor, ActorMotion motion);
+        event EventHandler<DeliveryArgs> onTryToDeliver;
+
+        public enum ActorMotion { Appear, Reject, Disappear }
+
+        public class DeliveryArgs : EventArgs
+        {
+            public Actor receiver;
+            public Item item;
+
+            public DeliveryArgs(Actor receiver, Item item)
+            {
+                this.receiver = receiver;
+                this.item = item;
+            }
+        }
     }
 
     public partial class GameManager : BaseBehaviour
@@ -35,7 +49,7 @@ namespace Fairies
             if (interactionManager == null)
                 LogError("NO INTERACTION MANAGER");
             else
-                interactionManager.TryDeliver = IM_TryDeliver;
+                interactionManager.onTryToDeliver += InteractionManager_onTryToDeliver;
 
             StartCoroutine(MonitorActiveRequestsIE());
             StartCoroutine(MonitorPendingPlayesIE());
@@ -262,28 +276,33 @@ namespace Fairies
             }
 
             activeRequests.Add(actor, request);
+            interactionManager.HandleActorMotion(actor, IInteractionManager.ActorMotion.Appear);
             return true;
         }
 
-        private bool? IM_TryDeliver(Actor actor, Item item)
+        private void InteractionManager_onTryToDeliver(object sender, IInteractionManager.DeliveryArgs e)
         {
+            Actor actor = e.receiver;
+            Item item = e.item;
+
             // Is it between the active requests?
             if (!activeRequests.ContainsKey(actor))
             {
                 LogError("Requested to deliver to {0} ({1}) but there's no active req", actor, item);
-                return null;
+                return;
             }
 
             // Is it a valid deliverance?
             if (!activeRequests[actor].TryCompleteRequest(item))
             {
                 LogWarning("Tried delivering to {0} ({1}) but was invalid", actor, item);
-                return false;
+                interactionManager.HandleActorMotion(actor, IInteractionManager.ActorMotion.Reject);
+                return;
             }
 
             LogInfo("Delivered to {0} ({1}) correctly", actor, item);
             TryRemoveRequest(actor);
-            return true;
+            interactionManager.HandleActorMotion(actor, IInteractionManager.ActorMotion.Disappear);
         }
 
     }
