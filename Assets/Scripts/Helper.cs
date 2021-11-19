@@ -13,7 +13,6 @@ namespace Fairies
         grandma,
         doctor,
         priest,
-        grandpa,
     }
 
     /// <summary>

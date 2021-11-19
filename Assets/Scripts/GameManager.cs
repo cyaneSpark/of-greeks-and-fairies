@@ -14,6 +14,7 @@ namespace Fairies
 
     public partial class GameManager : BaseBehaviour
     {
+        public GameObject interactionManagerHolder;
         private IInteractionManager interactionManager;
 
         public AudioSource grandma, doctor, priest;
@@ -28,6 +29,8 @@ namespace Fairies
             speakers.Add(Actor.grandma, grandma);
             speakers.Add(Actor.doctor, doctor);
             speakers.Add(Actor.priest, priest);
+
+            interactionManager = interactionManagerHolder.GetComponent<IInteractionManager>();
 
             if (interactionManager == null)
                 LogError("NO INTERACTION MANAGER");
@@ -103,7 +106,7 @@ namespace Fairies
 
                 // Wait for all the requests to play out
                 currentState = State.RequestWaiting;
-                while (activeRequests != null)
+                while (activeRequests.Count > 0)
                     yield return null;
 
                 // Let it die out
@@ -196,7 +199,9 @@ namespace Fairies
                         yield return null;
 
                     // Speak
+                    LogInfo("Handling line {0}", line);
                     yield return HandleLineIE(line.speaker, line.clip);
+                    LogInfo("Handled line {0}", line);
                 }
 
                 yield return null;
@@ -205,7 +210,14 @@ namespace Fairies
 
         private IEnumerator HandleLineIE(Actor speaker, AudioClip line)
         {
+            if (line == null)
+            {
+                LogWarning("Null clip for {0}", speaker);
+                yield break;
+            }
+
             // Get the AS
+            LogInfo("Playing {0}: {1}", speaker, line);
             AudioSource speakerAS = speakers[speaker];
 
             // Play the sound
