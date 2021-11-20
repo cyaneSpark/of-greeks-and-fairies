@@ -6,6 +6,7 @@ using UnityEngine.XR;
 using UnityEngine.XR.Interaction.Toolkit;
 using TMPro; // Add the TextMesh Pro namespace to access the various functions.
 using System.Linq;
+using UnityEngine.InputSystem;
 
 public class Hand : MonoBehaviour
 {
@@ -28,6 +29,10 @@ public class Hand : MonoBehaviour
     private float trigger_state = 0f;
     private float triggerCap_state = 0f;
     private float thumbCap_state = 0f;
+
+    [SerializeField] private InputActionProperty m_TouchThumbRest;
+    [SerializeField] private InputActionProperty m_TouchThumbStick;
+    [SerializeField] private InputActionProperty m_TouchTrigger;
 
     private void Awake()
     {
@@ -107,44 +112,49 @@ public class Hand : MonoBehaviour
             m_animator.SetFloat("Pinch", trigger_state);
         }
 
-        float triggerCapTarget = triggerCap_state;
-        if (Math.Abs(triggerCapTarget - triggerCap_state) > 0.01f)
-        {
-            float triggerCap_state_delta = triggerCapTarget - triggerCap_state;
-            if (triggerCap_state_delta > 0f)
-            {
-                triggerCap_state = Mathf.Clamp(triggerCap_state + 1 / anim_frames, 0f, triggerCapTarget);
-            }
-            else if (triggerCap_state_delta < 0f)
-            {
-                triggerCap_state = Mathf.Clamp(triggerCap_state - 1 / anim_frames, triggerCapTarget, 1f);
-            }
-            else
-            {
-                triggerCap_state = triggerCapTarget;
-            }
-
-            m_animator.SetLayerWeight(m_animLayerIndexPoint, 1f - triggerCap_state);
-        }
-
-        float thumbCapTarget = thumbCap_state;
-        if (Math.Abs(thumbCapTarget - thumbCap_state) > 0.01f)
-        {
-            float thumbCap_state_delta = thumbCapTarget - thumbCap_state;
-            if (thumbCap_state_delta > 0f)
-            {
-                thumbCap_state = Mathf.Clamp(thumbCap_state + 1 / anim_frames, 0f, thumbCapTarget);
-            }
-            else if (thumbCap_state_delta < 0f)
-            {
-                thumbCap_state = Mathf.Clamp(thumbCap_state - 1 / anim_frames, thumbCapTarget, 1f);
-            }
-            else
-            {
-                thumbCap_state = thumbCapTarget;
-            }
-
-            m_animator.SetLayerWeight(m_animLayerIndexThumb, 1f - thumbCap_state);
-        }
+        // float triggerCapTarget = m_TouchTrigger.action.ReadValue<float>();
+        // if (Math.Abs(triggerCapTarget - triggerCap_state) > 0.01f)
+        // {
+        //     float triggerCap_state_delta = triggerCapTarget - triggerCap_state;
+        //     if (triggerCap_state_delta > 0f)
+        //     {
+        //         triggerCap_state = Mathf.Clamp(triggerCap_state + 1 / anim_frames, 0f, triggerCapTarget);
+        //     }
+        //     else if (triggerCap_state_delta < 0f)
+        //     {
+        //         triggerCap_state = Mathf.Clamp(triggerCap_state - 1 / anim_frames, triggerCapTarget, 1f);
+        //     }
+        //     else
+        //     {
+        //         triggerCap_state = triggerCapTarget;
+        //     }
+        //
+        //     m_animator.SetLayerWeight(m_animLayerIndexPoint, 1f - triggerCap_state);
+        // }
+        //
+        // float thumbCapTarget = m_TouchThumbRest.action.ReadValue<float>();
+        // float thumbstickTarget = m_TouchThumbStick.action.ReadValue<float>();
+        //
+        // if (thumbCapTarget != thumbstickTarget)
+        //     thumbCapTarget = thumbCapTarget < thumbstickTarget ? thumbCapTarget : thumbstickTarget;
+        //
+        // if (Math.Abs(thumbCapTarget - thumbCap_state) > 0.01f)
+        // {
+        //     float thumbCap_state_delta = thumbCapTarget - thumbCap_state;
+        //     if (thumbCap_state_delta > 0f)
+        //     {
+        //         thumbCap_state = Mathf.Clamp(thumbCap_state + 1 / anim_frames, 0f, thumbCapTarget);
+        //     }
+        //     else if (thumbCap_state_delta < 0f)
+        //     {
+        //         thumbCap_state = Mathf.Clamp(thumbCap_state - 1 / anim_frames, thumbCapTarget, 1f);
+        //     }
+        //     else
+        //     {
+        //         thumbCap_state = thumbCapTarget;
+        //     }
+        //
+        //     m_animator.SetLayerWeight(m_animLayerIndexThumb, 1f - thumbCap_state);
+        // }
     }
 }

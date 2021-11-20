@@ -365,11 +365,13 @@ namespace Fairies
             Actor actor = e.receiver;
             Item item = e.item;
 
+            LogInfo("TRY TO DELIVER {0} {1}", actor, item);
             if (actor == Actor.INVALID)
             {
                 LogError("Tried delivering to an invalid Actor ; abort");
                 return;
             }
+
 
             // Is it between the active requests?
             if (!activeRequests.ContainsKey(actor))
