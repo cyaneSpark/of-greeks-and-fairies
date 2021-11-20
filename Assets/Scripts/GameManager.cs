@@ -331,6 +331,11 @@ namespace Fairies
 
             activeRequests[actor].onLineRequested -= Request_onLineRequested;
             activeRequests.Remove(actor);
+            
+            if (interactionManager == null)
+                LogError("Null interaction manager");
+            else
+                interactionManager.HandleActorMotion(actor, IInteractionManager.ActorMotion.Disappear);
 
             return true;
         }
@@ -346,7 +351,12 @@ namespace Fairies
             }
 
             activeRequests.Add(actor, request);
-            interactionManager.HandleActorMotion(actor, IInteractionManager.ActorMotion.Appear);
+
+            if (interactionManager == null)
+                LogError("Null interaction manager");
+            else
+                interactionManager.HandleActorMotion(actor, IInteractionManager.ActorMotion.Appear);
+
             return true;
         }
 
