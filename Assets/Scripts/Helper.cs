@@ -20,6 +20,8 @@ namespace Fairies
     /// </summary>
     public enum Item
     {
+        INVALID = -1,
+
         // Tutorial
         sideritis = 10,
 
