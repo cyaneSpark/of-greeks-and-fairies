@@ -10,9 +10,11 @@ namespace Fairies
 
     public enum Actor
     {
-        grandma,
-        doctor,
-        priest,
+        INVALID = -1,
+
+        grandma = 0,
+        doctor = 1,
+        priest = 2,
     }
 
     /// <summary>

@@ -36,6 +36,12 @@ namespace Fairies.Dev
             onTryToDeliver?.Invoke(this, new IInteractionManager.DeliveryArgs(actor, item));
         public void HandleActorMotion(Actor actor, IInteractionManager.ActorMotion motion)
         {
+            if (actor == Actor.INVALID)
+            {
+                LogError("INVALID ACTOR");
+                return;
+            }
+
             switch (motion)
             {
                 case IInteractionManager.ActorMotion.Appear:
