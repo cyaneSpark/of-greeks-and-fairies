@@ -21,34 +21,34 @@ namespace Fairies
     public enum Item
     {
         // Tutorial
-        sideritis_clove = 100,
+        sideritis = 10,
 
         // Intro
-        chamomile_clove = 200,
-        honey_jar = 210,
-        eucalyptus_branch = 220,
+        chamomile = 20,
+        honey = 21,
+        eucalyptus = 22,
 
         // Cough
-        oil_cup = 300,
-        salt_hand = 310, salt_pinch = 311,
+        oil = 30,
+        salt = 31,
 
         // Fever
-        alcohol_cup = 400,
-        glass_jar = 410,
-        basil_clove = 420,
-        apiganos_clove = 430,
+        alcohol = 40,
+        glass = 41,
+        basil = 42,
+        apiganos = 43,
 
         // Delirium
-        vitriol_chunk = 500,
-        soda_chunk = 510,
-        gunpowder_hand = 520,
-        garlic_clove = 530,
-        mint_clove = 540,
-        sage_clove = 550,
+        vitriol = 50,
+        soda = 51,
+        gunpowder = 52,
+        garlic = 53,
+        mint = 54,
+        sage = 55,
 
         // Climax
-        artemisian_flower = 600,
-        bone_turtle = 610,
-        hay_clove = 620,
+        artemisian = 60,
+        turtle = 61,
+        hay = 62,
     }
 }

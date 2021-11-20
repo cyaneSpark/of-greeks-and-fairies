@@ -21,43 +21,44 @@ namespace Fairies
         {
             { Phase.tutorial, new List<SingleRequest>()
             {
-                new SingleRequest(Actor.grandma, Item.sideritis_clove, 30, true), // Tutorial has no limit
+                new SingleRequest(Actor.grandma, Item.sideritis, 30, true), // Tutorial has no limit
             } },
             { Phase.intro, new List<SingleRequest>()
             {
-                new SingleRequest(Actor.priest, Item.chamomile_clove),
-                new SingleRequest(Actor.grandma, Item.honey_jar),
-                new SingleRequest(Actor.doctor, Item.eucalyptus_branch),
+                new SingleRequest(Actor.priest, Item.chamomile),
+                new SingleRequest(Actor.grandma, Item.honey),
+                new SingleRequest(Actor.doctor, Item.eucalyptus),
             } },
             { Phase.cough, new List<SingleRequest>()
             {
-                new SingleRequest(Actor.priest, Item.oil_cup),
-                new SingleRequest(Actor.grandma, Item.salt_hand),
-                new SingleRequest(Actor.doctor, Item.salt_pinch),
+                new SingleRequest(Actor.priest, Item.oil),
+                new SingleRequest(Actor.grandma, Item.salt),
+                new SingleRequest(Actor.doctor, Item.salt),
             } },
             { Phase.fever, new List<SingleRequest>()
             {
-                new SingleRequest(Actor.doctor, Item.alcohol_cup),
-                new SingleRequest(Actor.priest, Item.basil_clove),
-                new SingleRequest(Actor.grandma, Item.basil_clove),
+                new SingleRequest(Actor.doctor, Item.alcohol),
+                new SingleRequest(Actor.grandma, Item.apiganos),
 
-                new SingleRequest(Actor.grandma, Item.apiganos_clove),
+                new SingleRequest(Actor.doctor, Item.glass),
+                new SingleRequest(Actor.priest, Item.basil),
+                new SingleRequest(Actor.grandma, Item.basil),
             } },
             { Phase.delirium, new List<SingleRequest>()
             {
-                new SingleRequest(Actor.doctor, Item.soda_chunk),
-                new SingleRequest(Actor.grandma, Item.gunpowder_hand),
-                new SingleRequest(Actor.priest, Item.mint_clove),
+                new SingleRequest(Actor.doctor, Item.soda),
+                new SingleRequest(Actor.grandma, Item.gunpowder),
+                new SingleRequest(Actor.priest, Item.mint),
 
-                new SingleRequest(Actor.doctor, Item.vitriol_chunk),
-                new SingleRequest(Actor.grandma, Item.garlic_clove),
-                new SingleRequest(Actor.priest, Item.sage_clove),
+                new SingleRequest(Actor.doctor, Item.vitriol),
+                new SingleRequest(Actor.grandma, Item.garlic),
+                new SingleRequest(Actor.priest, Item.sage),
             } },
             { Phase.climax, new List<SingleRequest>()
             {
-                new SingleRequest(Actor.doctor, Item.artemisian_flower),
-                new SingleRequest(Actor.grandma, Item.bone_turtle),
-                new SingleRequest(Actor.priest, Item.hay_clove),
+                new SingleRequest(Actor.doctor, Item.artemisian),
+                new SingleRequest(Actor.grandma, Item.turtle),
+                new SingleRequest(Actor.priest, Item.hay),
             } },
             { Phase.outro, new List<SingleRequest>()
             {
