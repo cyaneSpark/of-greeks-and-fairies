@@ -1,19 +1,40 @@
 ﻿using System;
 using System.Collections.Generic;
+using UnityEngine;
 
 namespace Fairies
 {
     public partial class GameManager
     {
-        private Actor ClipToSpeaker(string storyBeatName)
+        private ClipMetaData GetClipMetaData(AudioClip clip)
         {
-            string[] parts = storyBeatName.Split('_');
-            Actor result = default;
+            ClipMetaData metaData;
 
-            if (parts.Length != 2 || !Enum.TryParse(parts[1], out result))
-                LogError("Invalid name ; {0}", storyBeatName);
+            string clipName = clip.name;
+            string[] parts = clipName.Split('_');
+            Actor speaker = default;
 
-            return result;
+            // delirium/0_FP_priest
+            // delirium/1_doctor
+            if (parts.Length < 2 || !Enum.TryParse(parts[parts.Length - 1], out speaker))
+                LogError("Invalid name ; {0}", clipName);
+
+            metaData.speaker = speaker;
+
+            // delirium/0_FP_priest
+            if (parts.Length == 3)
+                // The middle part is the branch
+                metaData.branch = parts[1];
+            else
+                metaData.branch = "";
+
+            return metaData;
+        }
+
+        private struct ClipMetaData
+        {
+            public Actor speaker;
+            public string branch;
         }
 
         private string GetStoryBeatPath(Phase phase) => phase.ToString();

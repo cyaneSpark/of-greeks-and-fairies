@@ -310,6 +310,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: GameManager
       objectReference: {fileID: 0}
+    - target: {fileID: 814253543428137815, guid: 9f622140dc2d4724b834b68601a9e866, type: 3}
+      propertyPath: DEBUG_ONLY_startFromPhase
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 814253543428137815, guid: 9f622140dc2d4724b834b68601a9e866, type: 3}
+      propertyPath: DEBUG_ONLY_doStartFromPhase
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 3402141473252765216, guid: 9f622140dc2d4724b834b68601a9e866, type: 3}
       propertyPath: m_RootOrder
       value: 2
