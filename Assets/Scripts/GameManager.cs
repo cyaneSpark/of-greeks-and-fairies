@@ -293,7 +293,7 @@ namespace Fairies
             }
 
             // Is it a valid deliverance?
-            if (!activeRequests[actor].TryGiveItem(item))
+            if (!activeRequests[actor].TryCompleteRequest(item))
             {
                 LogWarning("Tried delivering to {0} ({1}) but was invalid", actor, item);
                 interactionManager.HandleActorMotion(actor, IInteractionManager.ActorMotion.Reject);
@@ -304,5 +304,6 @@ namespace Fairies
             TryRemoveRequest(actor);
             interactionManager.HandleActorMotion(actor, IInteractionManager.ActorMotion.Disappear);
         }
+
     }
 }
