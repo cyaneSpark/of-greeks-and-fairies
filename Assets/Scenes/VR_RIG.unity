@@ -971,11 +971,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 62d81df9f92ad3e4f916d5761444f729, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -0.347
+      value: -0.8
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 62d81df9f92ad3e4f916d5761444f729, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -0.22800002
+      value: -0.256
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 62d81df9f92ad3e4f916d5761444f729, type: 3}
       propertyPath: m_LocalPosition.z
@@ -1016,6 +1016,10 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: 62d81df9f92ad3e4f916d5761444f729, type: 3}
       propertyPath: m_IsActive
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 62d81df9f92ad3e4f916d5761444f729, type: 3}
+      propertyPath: m_TagString
+      value: Granny
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 62d81df9f92ad3e4f916d5761444f729, type: 3}
@@ -1068,7 +1072,19 @@ MonoBehaviour:
       m_Calls: []
   m_SelectEntered:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1843204314}
+        m_TargetAssemblyTypeName: Fairies.MainInteractionManager, Assembly-CSharp
+        m_MethodName: Test
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
   m_SelectExited:
     m_PersistentCalls:
       m_Calls: []
@@ -3319,11 +3335,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 7b79be8c95c9c6f459187d701e04aaec, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -0.407
+      value: -0.8
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 7b79be8c95c9c6f459187d701e04aaec, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -0.263
+      value: -0.291
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 7b79be8c95c9c6f459187d701e04aaec, type: 3}
       propertyPath: m_LocalPosition.z
@@ -3364,6 +3380,10 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: 7b79be8c95c9c6f459187d701e04aaec, type: 3}
       propertyPath: m_IsActive
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 7b79be8c95c9c6f459187d701e04aaec, type: 3}
+      propertyPath: m_TagString
+      value: Doc
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 7b79be8c95c9c6f459187d701e04aaec, type: 3}
@@ -3411,7 +3431,19 @@ MonoBehaviour:
       m_Calls: []
   m_SelectEntered:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1843204314}
+        m_TargetAssemblyTypeName: Fairies.MainInteractionManager, Assembly-CSharp
+        m_MethodName: Test
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
   m_SelectExited:
     m_PersistentCalls:
       m_Calls: []
@@ -4284,9 +4316,17 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8396339438629929782, guid: 7e369d3255d3e6542b07409d48a7b045, type: 3}
+      propertyPath: currentPhase
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8396339438629929782, guid: 7e369d3255d3e6542b07409d48a7b045, type: 3}
       propertyPath: interactionManagerHolder
       value: 
       objectReference: {fileID: 1843204310}
+    - target: {fileID: 8396339438629929782, guid: 7e369d3255d3e6542b07409d48a7b045, type: 3}
+      propertyPath: DEBUG_ONLY_doStartFromPhase
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 8682349744031217311, guid: 7e369d3255d3e6542b07409d48a7b045, type: 3}
       propertyPath: m_Name
       value: GameManager
@@ -4306,11 +4346,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: d939cee1e42df4d4caa3be7d1b2bdbbc, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -0.39361942
+      value: -0.8
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: d939cee1e42df4d4caa3be7d1b2bdbbc, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -0.292
+      value: -0.32
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: d939cee1e42df4d4caa3be7d1b2bdbbc, type: 3}
       propertyPath: m_LocalPosition.z
@@ -4352,6 +4392,10 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: d939cee1e42df4d4caa3be7d1b2bdbbc, type: 3}
+      propertyPath: m_TagString
+      value: Priest
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: d939cee1e42df4d4caa3be7d1b2bdbbc, type: 3}
 --- !u!4 &686867792 stripped
@@ -4390,7 +4434,19 @@ MonoBehaviour:
       m_Calls: []
   m_SelectEntered:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1843204314}
+        m_TargetAssemblyTypeName: Fairies.MainInteractionManager, Assembly-CSharp
+        m_MethodName: Test
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
   m_SelectExited:
     m_PersistentCalls:
       m_Calls: []
