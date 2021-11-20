@@ -13,13 +13,13 @@ namespace Fairies
     {
         public GameObject hand_grandma, hand_doctor, hand_priest;
         private Dictionary<Actor, GameObject> hands = new Dictionary<Actor, GameObject>();
-        
+
         public event EventHandler<IInteractionManager.DeliveryArgs> onTryToDeliver;
 
         private void TryDeliver(Actor actor, Item item) =>
             onTryToDeliver?.Invoke(this, new IInteractionManager.DeliveryArgs(actor, item));
-        
-        public void Test(SelectEnterEventArgs args)
+
+        public void TryDeliverObject(SelectEnterEventArgs args)
         {
             ItemMono item = args.interactable.GetComponent<ItemMono>();
 
@@ -28,30 +28,30 @@ namespace Fairies
             if (args.interactor.CompareTag("Doc"))
             {
                 actor = Actor.doctor;
-
             }
             else if (args.interactor.CompareTag("Granny"))
             {
                 actor = Actor.grandma;
             }
-            else if(args.interactor.CompareTag("Priest"))
+            else if (args.interactor.CompareTag("Priest"))
             {
                 actor = Actor.priest;
             }
             else
             {
                 Debug.LogError("WHO IS SENDING THIS? INVALID ACTOR TAG!", args.interactor);
-                return;
+                TryDeliver(actor, Item.INVALID);
             }
-            
+
             if (item != null)
             {
-                
                 Debug.Log("SOMEONE THREW" + item.ID + "IN ME!");
+                TryDeliver(actor, item.ID);
             }
             else
             {
                 Debug.Log("SOMEONE THREW NOTHING IN ME!");
+                TryDeliver(actor, Item.INVALID);
             }
         }
 
@@ -83,11 +83,12 @@ namespace Fairies
                         hands[actor].SetActive(false);
                     });
                     break;
+                case IInteractionManager.ActorMotion.Partial:
+                    LogInfo("PARTIAL AGREEMENT {0}", actor);
+                    break;
                 default:
                     break;
             }
         }
-
-        
     }
 }

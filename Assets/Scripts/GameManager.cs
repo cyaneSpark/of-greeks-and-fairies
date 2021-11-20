@@ -355,6 +355,7 @@ namespace Fairies
             Actor actor = e.receiver;
             Item item = e.item;
 
+            LogInfo("TRY TO DELIVER {0} {1}", actor, item);
             // Is it between the active requests?
             if (!activeRequests.ContainsKey(actor))
             {

@@ -1075,7 +1075,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 1843204314}
         m_TargetAssemblyTypeName: Fairies.MainInteractionManager, Assembly-CSharp
-        m_MethodName: Test
+        m_MethodName: TryDeliverObject
         m_Mode: 0
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -1350,6 +1350,19 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: -3378821716180974576, guid: b95ca92a55968764c9afdad0b966ab66, type: 3}
   m_PrefabInstance: {fileID: 501650213}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &304431463
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 304431462}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4f47e12e2a7175642b0182012d703c57, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ID: 42
 --- !u!54 &304431464
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -3434,7 +3447,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 1843204314}
         m_TargetAssemblyTypeName: Fairies.MainInteractionManager, Assembly-CSharp
-        m_MethodName: Test
+        m_MethodName: TryDeliverObject
         m_Mode: 0
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -4324,6 +4337,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 1843204310}
     - target: {fileID: 8396339438629929782, guid: 7e369d3255d3e6542b07409d48a7b045, type: 3}
+      propertyPath: DEBUG_ONLY_startFromPhase
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 8396339438629929782, guid: 7e369d3255d3e6542b07409d48a7b045, type: 3}
       propertyPath: DEBUG_ONLY_doStartFromPhase
       value: 1
       objectReference: {fileID: 0}
@@ -4437,7 +4454,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 1843204314}
         m_TargetAssemblyTypeName: Fairies.MainInteractionManager, Assembly-CSharp
-        m_MethodName: Test
+        m_MethodName: TryDeliverObject
         m_Mode: 0
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
