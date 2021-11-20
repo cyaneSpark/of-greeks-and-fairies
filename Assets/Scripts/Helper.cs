@@ -20,8 +20,35 @@ namespace Fairies
     /// </summary>
     public enum Item
     {
-        garlic_head = 10, garlic_clove = 11, garlic_slice = 12,
-        oil_cup = 20,
-        tsipouro_cup = 30,
+        // Tutorial
+        sideritis = 10,
+
+        // Intro
+        chamomile = 20,
+        honey = 21,
+        eucalyptus = 22,
+
+        // Cough
+        oil = 30,
+        salt = 31,
+
+        // Fever
+        alcohol = 40,
+        glass = 41,
+        basil = 42,
+        apiganos = 43,
+
+        // Delirium
+        vitriol = 50,
+        soda = 51,
+        gunpowder = 52,
+        garlic = 53,
+        mint = 54,
+        sage = 55,
+
+        // Climax
+        artemisian = 60,
+        turtle = 61,
+        hay = 62,
     }
 }

@@ -16,46 +16,49 @@ namespace Fairies
             return result;
         }
 
-        private Actor? ChildToSpeaker(string childName)
-        {
-            Actor result = default;
-
-            if (!Enum.TryParse(childName, out result))
-            {
-                LogError("Invalid name ; {0}", childName);
-                return null;
-            }
-
-            return result;
-        }
         private string GetStoryBeatPath(Phase phase) => phase.ToString();
-
         private Dictionary<Phase, List<SingleRequest>> requests = new Dictionary<Phase, List<SingleRequest>>()
         {
             { Phase.tutorial, new List<SingleRequest>()
             {
-                new SingleRequest(Actor.grandma, Item.garlic_head, 30, true), // Tutorial has no limit
+                new SingleRequest(Actor.grandma, Item.sideritis, 30, true), // Tutorial has no limit
             } },
             { Phase.intro, new List<SingleRequest>()
             {
-                new SingleRequest(Actor.doctor, Item.tsipouro_cup, 60),
-                new SingleRequest(Actor.priest, Item.oil_cup, 60),
+                new SingleRequest(Actor.priest, Item.chamomile),
+                new SingleRequest(Actor.grandma, Item.honey),
+                new SingleRequest(Actor.doctor, Item.eucalyptus),
+            } },
+            { Phase.cough, new List<SingleRequest>()
+            {
+                new SingleRequest(Actor.priest, Item.oil),
+                new SingleRequest(Actor.grandma, Item.salt),
+                new SingleRequest(Actor.doctor, Item.salt),
             } },
             { Phase.fever, new List<SingleRequest>()
             {
+                new SingleRequest(Actor.doctor, Item.alcohol),
+                new SingleRequest(Actor.grandma, Item.apiganos),
 
-            } },
-            { Phase.seizure, new List<SingleRequest>()
-            {
-
+                new SingleRequest(Actor.doctor, Item.glass),
+                new SingleRequest(Actor.priest, Item.basil),
+                new SingleRequest(Actor.grandma, Item.basil),
             } },
             { Phase.delirium, new List<SingleRequest>()
             {
+                new SingleRequest(Actor.doctor, Item.soda),
+                new SingleRequest(Actor.grandma, Item.gunpowder),
+                new SingleRequest(Actor.priest, Item.mint),
 
+                new SingleRequest(Actor.doctor, Item.vitriol),
+                new SingleRequest(Actor.grandma, Item.garlic),
+                new SingleRequest(Actor.priest, Item.sage),
             } },
             { Phase.climax, new List<SingleRequest>()
             {
-
+                new SingleRequest(Actor.doctor, Item.artemisian),
+                new SingleRequest(Actor.grandma, Item.turtle),
+                new SingleRequest(Actor.priest, Item.hay),
             } },
             { Phase.outro, new List<SingleRequest>()
             {
@@ -90,7 +93,7 @@ namespace Fairies
             /// Wind is picking up, closer thunders
             /// Duration :: 3 minutes
             /// </summary>
-            fever,
+            cough,
 
             /// <summary>
             /// Act 2B
@@ -100,7 +103,7 @@ namespace Fairies
             /// The thunderstorm brews up and is audible
             /// Duration :: 1 minute
             /// </summary>
-            seizure,
+            fever,
 
             /// <summary>
             /// Act 3A
@@ -116,7 +119,7 @@ namespace Fairies
             /// Wind intensifies (windows trembling)
             /// They all have a final 3-ingredient urgent request
             /// Physically impossible to complete more than 1
-            /// Ends with thunder striking and silence
+            /// Ends with thunder striking grandpa breath and silence
             /// Duration :: 1 minute
             /// </summary>
             climax,
