@@ -11,7 +11,7 @@ namespace Fairies
         void HandleActorMotion(Actor actor, ActorMotion motion);
         event EventHandler<DeliveryArgs> onTryToDeliver;
 
-        public enum ActorMotion { Appear, Reject, Disappear }
+        public enum ActorMotion { Appear, Partial, Reject, Disappear }
 
         public class DeliveryArgs : EventArgs
         {
@@ -293,16 +293,26 @@ namespace Fairies
             }
 
             // Is it a valid deliverance?
-            if (!activeRequests[actor].TryGiveItem(item))
-            {
-                LogWarning("Tried delivering to {0} ({1}) but was invalid", actor, item);
-                interactionManager.HandleActorMotion(actor, IInteractionManager.ActorMotion.Reject);
-                return;
-            }
+            SingleRequest.GiveItemResult giveItemResult = activeRequests[actor].TryGiveItem(item);
 
-            LogInfo("Delivered to {0} ({1}) correctly", actor, item);
-            TryRemoveRequest(actor);
-            interactionManager.HandleActorMotion(actor, IInteractionManager.ActorMotion.Disappear);
+            switch (giveItemResult)
+            {
+                case SingleRequest.GiveItemResult.Reject:
+                    LogWarning("Tried delivering to {0} ({1}) but was invalid", actor, item);
+                    interactionManager.HandleActorMotion(actor, IInteractionManager.ActorMotion.Reject);
+                    break;
+                case SingleRequest.GiveItemResult.Partial:
+                    LogWarning("Successfully delivered to {0} ({1}) ; partially complete", actor, item);
+                    interactionManager.HandleActorMotion(actor, IInteractionManager.ActorMotion.Partial);
+                    break;
+                case SingleRequest.GiveItemResult.Complete:
+                    LogInfo("Delivered to {0} ({1}) correctly", actor, item);
+                    TryRemoveRequest(actor);
+                    interactionManager.HandleActorMotion(actor, IInteractionManager.ActorMotion.Disappear);
+                    break;
+                default:
+                    break;
+            }
         }
     }
 }

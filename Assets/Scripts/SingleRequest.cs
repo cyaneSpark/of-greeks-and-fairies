@@ -73,9 +73,9 @@ namespace Fairies
 
         public event EventHandler<AudioLine> onLineRequested;
 
-        public enum GiveItemCallback { Reject, Partial, Complete }
+        public enum GiveItemResult { Reject, Partial, Complete }
 
-        public GiveItemCallback TryGiveItem(Item candidate)
+        public GiveItemResult TryGiveItem(Item candidate)
         {
             // SINGLE ITEM
             if (itemB == null)
@@ -84,7 +84,7 @@ namespace Fairies
                 if (candidate == itemA)
                 {
                     RequestLine(line_success);
-                    return GiveItemCallback.Complete;
+                    return GiveItemResult.Complete;
                 }
 
                 // Wrong item
@@ -92,7 +92,7 @@ namespace Fairies
 
                 fulfiledA = true;
 
-                return GiveItemCallback.Reject;
+                return GiveItemResult.Reject;
             }
 
             // TWO ITEMS
@@ -103,11 +103,11 @@ namespace Fairies
                 if (fulfiledB)
                 {
                     RequestLine(line_success);
-                    return GiveItemCallback.Complete;
+                    return GiveItemResult.Complete;
                 }
 
                 RequestLine(line_success_a);
-                return GiveItemCallback.Partial;
+                return GiveItemResult.Partial;
             }
 
             else if (candidate == itemB)
@@ -117,11 +117,11 @@ namespace Fairies
                 if (fulfiledA)
                 {
                     RequestLine(line_success);
-                    return GiveItemCallback.Complete;
+                    return GiveItemResult.Complete;
                 }
 
                 RequestLine(line_success_b);
-                return GiveItemCallback.Partial;
+                return GiveItemResult.Partial;
             }
 
             // It's a wrong item
@@ -134,7 +134,7 @@ namespace Fairies
                 else
                     RequestLine(line_wrong_b);
 
-                return GiveItemCallback.Reject;
+                return GiveItemResult.Reject;
             }
         }
 
@@ -157,7 +157,17 @@ namespace Fairies
             // Done!
             if (timeElapsed >= maxDuration)
             {
-                RequestLine(line_timeout);
+                if (itemB == null)
+                    RequestLine(line_timeout);
+                else
+                {
+                    if (!fulfiledA && !fulfiledB)
+                        RequestLine(line_timeout);
+                    else if (fulfiledB)
+                        RequestLine(line_timeout_a);
+                    else
+                        RequestLine(line_timeout_b);
+                }
 
                 if (restart)
                 {
@@ -179,13 +189,35 @@ namespace Fairies
 
             if (!hasRequested1 && timeElapsed > req1_At)
             {
-                RequestLine(line_req1);
+                if (itemB == null)
+                    RequestLine(line_req1);
+                else
+                {
+                    if (!fulfiledA && !fulfiledB)
+                        RequestLine(line_req1);
+                    else if (fulfiledB)
+                        RequestLine(line_req1_a);
+                    else
+                        RequestLine(line_req1_b);
+                }
+
                 hasRequested1 = true;
             }
 
             if (!hasRequested2 && timeElapsed > req2_At)
             {
-                RequestLine(line_req2);
+                if (itemB == null)
+                    RequestLine(line_req2);
+                else
+                {
+                    if (!fulfiledA && !fulfiledB)
+                        RequestLine(line_req2);
+                    else if (fulfiledB)
+                        RequestLine(line_req2_a);
+                    else
+                        RequestLine(line_req2_b);
+                }
+
                 hasRequested2 = true;
             }
 

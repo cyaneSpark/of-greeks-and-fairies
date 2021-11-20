@@ -37,22 +37,19 @@ namespace Fairies
             } },
             { Phase.fever, new List<SingleRequest>()
             {
-                new SingleRequest(Actor.doctor, Item.alcohol),
+                new SingleRequest(Actor.doctor, Item.alcohol, Item.glass),
                 new SingleRequest(Actor.grandma, Item.apiganos),
-
-                new SingleRequest(Actor.doctor, Item.glass),
+            } },
+            { Phase.seizure, new List<SingleRequest>()
+            {
                 new SingleRequest(Actor.priest, Item.basil),
                 new SingleRequest(Actor.grandma, Item.basil),
             } },
             { Phase.delirium, new List<SingleRequest>()
             {
-                new SingleRequest(Actor.doctor, Item.soda),
-                new SingleRequest(Actor.grandma, Item.gunpowder),
-                new SingleRequest(Actor.priest, Item.mint),
-
-                new SingleRequest(Actor.doctor, Item.vitriol),
-                new SingleRequest(Actor.grandma, Item.garlic),
-                new SingleRequest(Actor.priest, Item.sage),
+                new SingleRequest(Actor.doctor, Item.soda, Item.vitriol),
+                new SingleRequest(Actor.grandma, Item.gunpowder, Item.garlic),
+                new SingleRequest(Actor.priest, Item.mint, Item.sage),
             } },
             { Phase.climax, new List<SingleRequest>()
             {
@@ -104,6 +101,16 @@ namespace Fairies
             /// Duration :: 1 minute
             /// </summary>
             fever,
+
+            /// <summary>
+            /// Plot Point 3
+            /// Seizure marks the final gate ; and they all have a single urgent request.
+            /// Physically hard to complete 2, impossible to complete all 3
+            /// Their attitudes also change
+            /// The thunderstorm brews up and is audible
+            /// Duration :: 1 minute
+            /// </summary>
+            seizure,
 
             /// <summary>
             /// Act 3A
