@@ -6,12 +6,13 @@ namespace Fairies
     [System.Serializable]
     public class SingleRequest : BaseClass
     {
+        const float defaultDuration = 60;
         const float req1_At01 = 0.33f;
         const float req2_At01 = 0.67f;
 
         [SerializeField] private bool restart = false;
         public override string ToString() => string.Format("{0}_{1}_{2}_{3}", requester, item, maxDuration, clipsLoaded ? "LOADED" : "UNLOADED");
-        public SingleRequest(Actor requester, Item item, float maxDuration, bool restart = false)
+        public SingleRequest(Actor requester, Item item, float maxDuration = defaultDuration, bool restart = false)
         {
             this.requester = requester;
             this.item = item;
