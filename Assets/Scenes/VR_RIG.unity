@@ -3172,6 +3172,22 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: -3378821716180974576, guid: b95ca92a55968764c9afdad0b966ab66, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -1737210750974058447, guid: b95ca92a55968764c9afdad0b966ab66, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 1.52
+      objectReference: {fileID: 0}
+    - target: {fileID: -1737210750974058447, guid: b95ca92a55968764c9afdad0b966ab66, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 1.5
+      objectReference: {fileID: 0}
+    - target: {fileID: -1737210750974058447, guid: b95ca92a55968764c9afdad0b966ab66, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -0.086
+      objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: b95ca92a55968764c9afdad0b966ab66, type: 3}
       propertyPath: m_Name
       value: FurnitureObjects

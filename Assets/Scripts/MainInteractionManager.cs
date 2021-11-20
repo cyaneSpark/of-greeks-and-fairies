@@ -80,6 +80,7 @@ namespace Fairies
                 case IInteractionManager.ActorMotion.Disappear:
                     hands[actor].transform.DOLocalMoveX(-0.8f, 0.8f).SetEase(Ease.OutExpo).OnComplete(() =>
                     {
+                        LogInfo("ANIMATE {0} DISSAPEAR", actor);
                         hands[actor].SetActive(false);
                     });
                     break;
