@@ -76,6 +76,13 @@ namespace Fairies
             // Play the lines of that phase
             foreach (Phase currentPhase in (Phase[])Enum.GetValues(typeof(Phase)))
             {
+#if UNITY_EDITOR
+                if (DEBUG_ONLY_doStartFromPhase && currentPhase != DEBUG_ONLY_startFromPhase)
+                {
+                    LogWarning("EDITOR ONLY :: SKIPPING {0}", currentPhase);
+                    continue;
+                }
+#endif
                 this.currentPhase = currentPhase;
 
                 // Load the lines of that phase
@@ -122,6 +129,17 @@ namespace Fairies
                 currentState = State.RequestWaiting;
                 while (activeRequests.Count > 0)
                     yield return null;
+
+                // Wait if there's any thing still playing
+                while (lineRequests.Count > 0)
+                    yield return null;
+                yield return null; // Let it queue if needed
+                while (timeInSilence == 0)
+                    yield return null;
+
+                // Unload everything
+                foreach (SingleRequest request in requests[currentPhase])
+                    request.UnloadClips();
 
                 // Let it die out
                 currentState = State.PhaseEnd;
@@ -178,6 +196,8 @@ namespace Fairies
         /// Dictionary serialization (<see cref="activeRequests"/> is problematic, use this to view
         /// </summary>
         List<SingleRequest> DEBUG_ONLY_activeRequests = new List<SingleRequest>();
+        [SerializeField] private bool DEBUG_ONLY_doStartFromPhase = false;
+        [SerializeField] private Phase DEBUG_ONLY_startFromPhase = Phase.fever;
 #endif
         private IEnumerator MonitorSilenceIE()
         {
@@ -262,7 +282,6 @@ namespace Fairies
                 return false;
             }
 
-            activeRequests[actor].UnloadClips();
             activeRequests[actor].onLineRequested -= Request_onLineRequested;
             activeRequests.Remove(actor);
 
