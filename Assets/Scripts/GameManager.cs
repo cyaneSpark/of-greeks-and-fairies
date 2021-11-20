@@ -11,7 +11,7 @@ namespace Fairies
         void HandleActorMotion(Actor actor, ActorMotion motion);
         event EventHandler<DeliveryArgs> onTryToDeliver;
 
-        public enum ActorMotion { Appear, Reject, Disappear }
+        public enum ActorMotion { Appear, Partial, Reject, Disappear }
 
         public class DeliveryArgs : EventArgs
         {
@@ -71,11 +71,20 @@ namespace Fairies
 
         enum State { StoryLines, LinesToRequests, RequestAnnouncement, RequestWaiting, PhaseEnd }
 
+        List<Actor> successfulRequests = new List<Actor>();
+
         IEnumerator Start()
         {
             // Play the lines of that phase
             foreach (Phase currentPhase in (Phase[])Enum.GetValues(typeof(Phase)))
             {
+#if UNITY_EDITOR
+                if (DEBUG_ONLY_doStartFromPhase && currentPhase < DEBUG_ONLY_startFromPhase)
+                {
+                    LogWarning("EDITOR ONLY :: SKIPPING {0}", currentPhase);
+                    continue;
+                }
+#endif
                 this.currentPhase = currentPhase;
 
                 // Load the lines of that phase
@@ -85,11 +94,55 @@ namespace Fairies
                 // Loop through them
                 foreach (AudioClip line in storyLines)
                 {
-                    // Infer the speaker
-                    Actor speaker = ClipToSpeaker(line.name);
+                    // Infer the metadata
+                    ClipMetaData metaData = GetClipMetaData(line);
+
+                    // Infer the branch and if it's one we should be on
+                    if (metaData.branch != "")
+                    {
+                        bool goodBranch = true;
+
+                        // Successful Priest
+                        if (metaData.branch == "ps")
+                            goodBranch = successfulRequests.Contains(Actor.priest);
+
+                        // Successful Doctor
+                        else if (metaData.branch == "ds")
+                            goodBranch = successfulRequests.Contains(Actor.doctor);
+
+                        // Successful Grandma
+                        else if (metaData.branch == "gs")
+                            goodBranch = successfulRequests.Contains(Actor.grandma);
+
+                        // Successful Priest
+                        else if (metaData.branch == "pf")
+                            goodBranch = !successfulRequests.Contains(Actor.priest);
+
+                        // Successful Doctor
+                        else if (metaData.branch == "df")
+                            goodBranch = !successfulRequests.Contains(Actor.doctor);
+
+                        // Successful Grandma
+                        else if (metaData.branch == "gf")
+                            goodBranch = !successfulRequests.Contains(Actor.grandma);
+
+                        else
+                        {
+                            LogError("Invalid Branch :: {0}", metaData.branch);
+                            continue;
+                        }
+
+                        if (goodBranch)
+                            LogInfo("Using branch {0}", metaData.branch);
+                        else
+                        {
+                            LogWarning("Skipping branch {0} | conditions not met", metaData.branch);
+                            continue;
+                        }
+                    }
 
                     // Play the sound
-                    yield return HandleLineIE(speaker, line);
+                    yield return HandleLineIE(metaData.speaker, line);
 
                     // Let it die out
                     for (float t = 0; t < interLinePause; t += Time.deltaTime)
@@ -104,6 +157,7 @@ namespace Fairies
 
                 // Go through the requests of that phase
                 currentState = State.RequestAnnouncement;
+                successfulRequests.Clear();
                 foreach (SingleRequest request in requests[currentPhase])
                 {
                     // Initialize it
@@ -122,6 +176,17 @@ namespace Fairies
                 currentState = State.RequestWaiting;
                 while (activeRequests.Count > 0)
                     yield return null;
+
+                // Wait if there's any thing still playing
+                while (lineRequests.Count > 0)
+                    yield return null;
+                yield return null; // Let it queue if needed
+                while (timeInSilence == 0)
+                    yield return null;
+
+                // Unload everything
+                foreach (SingleRequest request in requests[currentPhase])
+                    request.UnloadClips();
 
                 // Let it die out
                 currentState = State.PhaseEnd;
@@ -152,6 +217,10 @@ namespace Fairies
                             // Should be removed
                             timedOutRequests.Add(kVP.Key);
                             break;
+                        case SingleRequest.State.Impossible:
+                            // Should be removed
+                            timedOutRequests.Add(kVP.Key);
+                            break;
                         default:
                             throw new NotImplementedException();
                     }
@@ -174,6 +243,8 @@ namespace Fairies
         /// Dictionary serialization (<see cref="activeRequests"/> is problematic, use this to view
         /// </summary>
         List<SingleRequest> DEBUG_ONLY_activeRequests = new List<SingleRequest>();
+        [SerializeField] private bool DEBUG_ONLY_doStartFromPhase = false;
+        [SerializeField] private Phase DEBUG_ONLY_startFromPhase = Phase.fever;
 #endif
         private IEnumerator MonitorSilenceIE()
         {
@@ -258,7 +329,6 @@ namespace Fairies
                 return false;
             }
 
-            activeRequests[actor].UnloadClips();
             activeRequests[actor].onLineRequested -= Request_onLineRequested;
             activeRequests.Remove(actor);
 
@@ -293,17 +363,31 @@ namespace Fairies
             }
 
             // Is it a valid deliverance?
-            if (!activeRequests[actor].TryCompleteRequest(item))
+            SingleRequest.GiveItemResult giveItemResult = activeRequests[actor].TryGiveItem(item);
+
+            switch (giveItemResult)
             {
-                LogWarning("Tried delivering to {0} ({1}) but was invalid", actor, item);
-                interactionManager.HandleActorMotion(actor, IInteractionManager.ActorMotion.Reject);
-                return;
+                case SingleRequest.GiveItemResult.Reject:
+                    LogWarning("Tried delivering to {0} ({1}) but was invalid", actor, item);
+                    interactionManager.HandleActorMotion(actor, IInteractionManager.ActorMotion.Reject);
+                    break;
+                case SingleRequest.GiveItemResult.Partial:
+                    LogWarning("Successfully delivered to {0} ({1}) ; partially complete", actor, item);
+                    interactionManager.HandleActorMotion(actor, IInteractionManager.ActorMotion.Partial);
+                    break;
+                case SingleRequest.GiveItemResult.Complete:
+                    LogInfo("Delivered to {0} ({1}) correctly", actor, item);
+                    TryRemoveRequest(actor);
+                    successfulRequests.Add(actor);
+                    interactionManager.HandleActorMotion(actor, IInteractionManager.ActorMotion.Disappear);
+                    break;
+                default:
+                    break;
             }
 
-            LogInfo("Delivered to {0} ({1}) correctly", actor, item);
-            TryRemoveRequest(actor);
-            interactionManager.HandleActorMotion(actor, IInteractionManager.ActorMotion.Disappear);
+            // Mark any pending requests that wanted the same item for cancelation
+            foreach (SingleRequest req in activeRequests.Values.Where(x => x.WantsItem(item)))
+                req.MarkImpossible();
         }
-
     }
 }

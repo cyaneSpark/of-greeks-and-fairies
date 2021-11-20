@@ -1,19 +1,40 @@
 ﻿using System;
 using System.Collections.Generic;
+using UnityEngine;
 
 namespace Fairies
 {
     public partial class GameManager
     {
-        private Actor ClipToSpeaker(string storyBeatName)
+        private ClipMetaData GetClipMetaData(AudioClip clip)
         {
-            string[] parts = storyBeatName.Split('_');
-            Actor result = default;
+            ClipMetaData metaData;
 
-            if (parts.Length != 2 || !Enum.TryParse(parts[1], out result))
-                LogError("Invalid name ; {0}", storyBeatName);
+            string clipName = clip.name;
+            string[] parts = clipName.Split('_');
+            Actor speaker = default;
 
-            return result;
+            // delirium/0_FP_priest
+            // delirium/1_doctor
+            if (parts.Length < 2 || !Enum.TryParse(parts[parts.Length - 1], out speaker))
+                LogError("Invalid name ; {0}", clipName);
+
+            metaData.speaker = speaker;
+
+            // delirium/0_FP_priest
+            if (parts.Length == 3)
+                // The middle part is the branch
+                metaData.branch = parts[1];
+            else
+                metaData.branch = "";
+
+            return metaData;
+        }
+
+        private struct ClipMetaData
+        {
+            public Actor speaker;
+            public string branch;
         }
 
         private string GetStoryBeatPath(Phase phase) => phase.ToString();
@@ -21,7 +42,7 @@ namespace Fairies
         {
             { Phase.tutorial, new List<SingleRequest>()
             {
-                new SingleRequest(Actor.grandma, Item.sideritis, 30, true), // Tutorial has no limit
+                new SingleRequest(Actor.grandma, Item.sideritis, null, 30, true), // Tutorial has no limit
             } },
             { Phase.intro, new List<SingleRequest>()
             {
@@ -37,22 +58,19 @@ namespace Fairies
             } },
             { Phase.fever, new List<SingleRequest>()
             {
-                new SingleRequest(Actor.doctor, Item.alcohol),
+                new SingleRequest(Actor.doctor, Item.alcohol, Item.glass),
                 new SingleRequest(Actor.grandma, Item.apiganos),
-
-                new SingleRequest(Actor.doctor, Item.glass),
+            } },
+            { Phase.fever0, new List<SingleRequest>()
+            {
                 new SingleRequest(Actor.priest, Item.basil),
                 new SingleRequest(Actor.grandma, Item.basil),
             } },
             { Phase.delirium, new List<SingleRequest>()
             {
-                new SingleRequest(Actor.doctor, Item.soda),
-                new SingleRequest(Actor.grandma, Item.gunpowder),
-                new SingleRequest(Actor.priest, Item.mint),
-
-                new SingleRequest(Actor.doctor, Item.vitriol),
-                new SingleRequest(Actor.grandma, Item.garlic),
-                new SingleRequest(Actor.priest, Item.sage),
+                new SingleRequest(Actor.doctor, Item.soda, Item.vitriol),
+                new SingleRequest(Actor.grandma, Item.gunpowder, Item.garlic),
+                new SingleRequest(Actor.priest, Item.mint, Item.sage),
             } },
             { Phase.climax, new List<SingleRequest>()
             {
@@ -104,6 +122,8 @@ namespace Fairies
             /// Duration :: 1 minute
             /// </summary>
             fever,
+
+            fever0,
 
             /// <summary>
             /// Act 3A

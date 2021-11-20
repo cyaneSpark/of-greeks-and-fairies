@@ -11,23 +11,41 @@ namespace Fairies
         const float req2_At01 = 0.67f;
 
         [SerializeField] private bool restart = false;
-        public override string ToString() => string.Format("{0}_{1}_{2}_{3}", requester, item, maxDuration, clipsLoaded ? "LOADED" : "UNLOADED");
-        public SingleRequest(Actor requester, Item item, float maxDuration = defaultDuration, bool restart = false)
+        private string itemStr => itemB == null ? itemA.ToString() : string.Format("{0}_{1}", itemA, itemB);
+        public override string ToString() => string.Format("{0}_{1}_{2}_{3}", requester, itemStr, maxDuration, clipsLoaded ? "LOADED" : "UNLOADED");
+        public SingleRequest(Actor requester, Item itemA, Item? itemB = null, float maxDuration = defaultDuration, bool restart = false)
         {
             this.requester = requester;
-            this.item = item;
+            this.itemA = itemA;
+            this.itemB = itemB;
             this.maxDuration = maxDuration;
             this.restart = restart;
 
-            string GetPath(string name) => string.Format("{0}/{1}", item, name);
+            string GetPath(string name) => string.Format("{0}/{1}", itemStr, name);
 
             line_req0 = new AudioLine(requester, GetPath("r0"));
+
             line_req1 = new AudioLine(requester, GetPath("r1"));
+            line_req1_a = new AudioLine(requester, GetPath("r1_a"));
+            line_req1_b = new AudioLine(requester, GetPath("r1_b"));
+
             line_req2 = new AudioLine(requester, GetPath("r2"));
-            line_wrongType = new AudioLine(requester, GetPath("wt"));
-            line_wrongQuantity = new AudioLine(requester, GetPath("wq"));
+            line_req2_a = new AudioLine(requester, GetPath("r2_a"));
+            line_req2_b = new AudioLine(requester, GetPath("r2_b"));
+
+            line_wrong = new AudioLine(requester, GetPath("w"));
+            line_wrong_a = new AudioLine(requester, GetPath("w_a"));
+            line_wrong_b = new AudioLine(requester, GetPath("w_b"));
+
             line_success = new AudioLine(requester, GetPath("s"));
+            line_success_a = new AudioLine(requester, GetPath("s_a"));
+            line_success_b = new AudioLine(requester, GetPath("s_b"));
+
             line_timeout = new AudioLine(requester, GetPath("t"));
+            line_timeout_a = new AudioLine(requester, GetPath("t_a"));
+            line_timeout_b = new AudioLine(requester, GetPath("t_b"));
+
+            line_impossible = new AudioLine(requester, GetPath("i"));
         }
 
         public void Reset()
@@ -39,7 +57,11 @@ namespace Fairies
         }
 
         public Actor requester;
-        private Item item;
+        private Item itemA;
+        private Item? itemB;
+
+        private bool fulfiledA = false;
+        private bool fulfiledB = false;
 
         [Range(15, 90)] [SerializeField] private float maxDuration;
         float req1_At => req1_At01 * maxDuration;
@@ -47,30 +69,75 @@ namespace Fairies
 
         float timeElapsed = 0;
 
-        public enum State { ClipsNotLoaded, Running, TimeOut }
+        public enum State { ClipsNotLoaded, Running, Impossible, TimeOut }
 
         protected void RequestLine(AudioLine audioLine) => onLineRequested?.Invoke(this, audioLine);
 
         public event EventHandler<AudioLine> onLineRequested;
 
-        public bool TryCompleteRequest(Item candidate)
+        public enum GiveItemResult { Reject, Partial, Complete }
+
+        public GiveItemResult TryGiveItem(Item candidate)
         {
-            // Correct type and quantity
-            if (candidate == item)
+            // SINGLE ITEM
+            if (itemB == null)
             {
-                RequestLine(line_success);
-                return true;
+                // Item A 
+                if (candidate == itemA)
+                {
+                    RequestLine(line_success);
+                    return GiveItemResult.Complete;
+                }
+
+                // Wrong item
+                RequestLine(line_wrong);
+
+                fulfiledA = true;
+
+                return GiveItemResult.Reject;
             }
 
-            // Correct type (wrong quantity)
-            if (candidate.IsSameTypeWith(item))
-                RequestLine(line_wrongQuantity);
+            // TWO ITEMS
+            if (candidate == itemA)
+            {
+                fulfiledA = true;
 
-            // Incorrect type (indifferent quantity)
+                if (fulfiledB)
+                {
+                    RequestLine(line_success);
+                    return GiveItemResult.Complete;
+                }
+
+                RequestLine(line_success_a);
+                return GiveItemResult.Partial;
+            }
+
+            else if (candidate == itemB)
+            {
+                fulfiledB = true;
+
+                if (fulfiledA)
+                {
+                    RequestLine(line_success);
+                    return GiveItemResult.Complete;
+                }
+
+                RequestLine(line_success_b);
+                return GiveItemResult.Partial;
+            }
+
+            // It's a wrong item
             else
-                RequestLine(line_wrongType);
+            {
+                if (!fulfiledA && !fulfiledB)
+                    RequestLine(line_wrong);
+                else if (!fulfiledA)
+                    RequestLine(line_wrong_a);
+                else
+                    RequestLine(line_wrong_b);
 
-            return false;
+                return GiveItemResult.Reject;
+            }
         }
 
         private bool hasRequested0;
@@ -87,12 +154,31 @@ namespace Fairies
                 LogWarning("No clips!");
                 return State.ClipsNotLoaded;
             }
+
             timeElapsed += dT;
+
+            // Impossible
+            if (isImpossible)
+            {
+                RequestLine(line_impossible);
+                LogInfo("Impossible - Ending!");
+                return State.Impossible;
+            }
 
             // Done!
             if (timeElapsed >= maxDuration)
             {
-                RequestLine(line_timeout);
+                if (itemB == null)
+                    RequestLine(line_timeout);
+                else
+                {
+                    if (!fulfiledA && !fulfiledB)
+                        RequestLine(line_timeout);
+                    else if (fulfiledB)
+                        RequestLine(line_timeout_a);
+                    else
+                        RequestLine(line_timeout_b);
+                }
 
                 if (restart)
                 {
@@ -114,13 +200,35 @@ namespace Fairies
 
             if (!hasRequested1 && timeElapsed > req1_At)
             {
-                RequestLine(line_req1);
+                if (itemB == null)
+                    RequestLine(line_req1);
+                else
+                {
+                    if (!fulfiledA && !fulfiledB)
+                        RequestLine(line_req1);
+                    else if (fulfiledB)
+                        RequestLine(line_req1_a);
+                    else
+                        RequestLine(line_req1_b);
+                }
+
                 hasRequested1 = true;
             }
 
             if (!hasRequested2 && timeElapsed > req2_At)
             {
-                RequestLine(line_req2);
+                if (itemB == null)
+                    RequestLine(line_req2);
+                else
+                {
+                    if (!fulfiledA && !fulfiledB)
+                        RequestLine(line_req2);
+                    else if (fulfiledB)
+                        RequestLine(line_req2_a);
+                    else
+                        RequestLine(line_req2_b);
+                }
+
                 hasRequested2 = true;
             }
 
@@ -132,12 +240,29 @@ namespace Fairies
         public void LoadClips()
         {
             line_req0.Load();
+
             line_req1.Load();
+            line_req1_a.Load();
+            line_req1_b.Load();
+
             line_req2.Load();
-            line_wrongType.Load();
-            line_wrongQuantity.Load();
+            line_req2_a.Load();
+            line_req2_b.Load();
+
+            line_wrong.Load();
+            line_wrong_a.Load();
+            line_wrong_b.Load();
+
             line_success.Load();
+            line_success_a.Load();
+            line_success_b.Load();
+
             line_timeout.Load();
+            line_timeout_a.Load();
+            line_timeout_b.Load();
+
+            line_impossible.Load();
+
             clipsLoaded = true;
 
             LogInfo("Loaded Clips");
@@ -146,50 +271,127 @@ namespace Fairies
         public void UnloadClips()
         {
             clipsLoaded = true;
-            line_req0.Unload();
-            line_req1.Unload();
-            line_req2.Unload();
-            line_wrongType.Unload();
-            line_wrongQuantity.Unload();
-            line_success.Unload();
-            line_timeout.Unload();
 
+            line_req0.Unload();
+
+            line_req1.Unload();
+            line_req1_a.Unload();
+            line_req1_b.Unload();
+
+            line_req2.Unload();
+            line_req2_a.Unload();
+            line_req2_b.Unload();
+
+            line_wrong.Unload();
+            line_wrong_a.Unload();
+            line_wrong_b.Unload();
+
+            line_success.Unload();
+            line_success_a.Unload();
+            line_success_b.Unload();
+
+            line_timeout.Unload();
+            line_timeout_a.Unload();
+            line_timeout_b.Unload();
+
+            line_impossible.Unload();
+            
             LogInfo("Unloaded Clips");
         }
 
         /// <summary>
-        /// Call out at the beginning
+        /// Call out at the beginning with all items
         /// </summary>
         private AudioLine line_req0;
 
         /// <summary>
-        /// Call out as a first reminder (check <see cref="req1_At"/>
+        /// Call out as a first reminder (check <see cref="req1_At"/> if all items are missing
         /// </summary>
         private AudioLine line_req1;
 
         /// <summary>
-        /// Call out as a last call (check <see cref="req2_At"/>
+        /// Call out as a first reminder (check <see cref="req1_At"/> if only A is missing
+        /// </summary>
+        private AudioLine line_req1_a;
+
+        /// <summary>
+        /// Call out as a first reminder (check <see cref="req1_At"/> if only B is missing
+        /// </summary>
+        private AudioLine line_req1_b;
+
+        /// <summary>
+        /// Call out as a last call (check <see cref="req2_At"/> if all items are missing
         /// </summary>
         private AudioLine line_req2;
 
         /// <summary>
-        /// Call out when the type was wrong
+        /// Call out as a last call (check <see cref="req2_At"/> if only A is missing
         /// </summary>
-        private AudioLine line_wrongType;
+        private AudioLine line_req2_a;
 
         /// <summary>
-        /// Call out when the quantity was wrong
+        /// Call out as a last call (check <see cref="req2_At"/> if only B is missing
         /// </summary>
-        private AudioLine line_wrongQuantity;
+        private AudioLine line_req2_b;
 
         /// <summary>
-        /// Call out when the request is successfully delivered
+        /// Call out when the type was wrong, and all items are missing
+        /// </summary>
+        private AudioLine line_wrong;
+
+        /// <summary>
+        /// Call out when the type was wrong, and only A is missing
+        /// </summary>
+        private AudioLine line_wrong_a;
+
+        /// <summary>
+        /// Call out when the type was wrong, and only B is missing
+        /// </summary>
+        private AudioLine line_wrong_b;
+
+        /// <summary>
+        /// Call out when the request is successfully delivered and both items are there
         /// </summary>
         private AudioLine line_success;
 
         /// <summary>
-        /// Call out when the request times out (after <see cref="maxDuration"/>
+        /// Call out when the request is successfully delivered, but only a has been delivered
+        /// </summary>
+        private AudioLine line_success_a;
+
+        /// <summary>
+        /// Call out when the request is successfully delivered, but only b has been delivered
+        /// </summary>
+        private AudioLine line_success_b;
+
+        /// <summary>
+        /// Call out when the request times out (after <see cref="maxDuration"/> and all items are missing
         /// </summary>
         private AudioLine line_timeout;
+
+        /// <summary>
+        /// Call out when the request times out (after <see cref="maxDuration"/> but only A is missing
+        /// </summary>
+        private AudioLine line_timeout_a;
+
+        /// <summary>
+        /// Call out when the request times out (after <see cref="maxDuration"/> but only B is missing
+        /// </summary>
+        private AudioLine line_timeout_b;
+
+        /// <summary>
+        /// Call out when the request has been marked <see cref="isImpossible"/>
+        /// </summary>
+        private AudioLine line_impossible;
+
+        bool isImpossible = false;
+
+        internal void MarkImpossible()
+        {
+            LogWarning("Marked impossible!");
+            isImpossible = true;
+        }
+
+        internal bool WantsItem(Item item) => (item == itemA && !fulfiledA) || (item == itemB && !fulfiledB);
     }
 }
