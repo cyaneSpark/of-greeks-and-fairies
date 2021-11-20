@@ -152,6 +152,10 @@ namespace Fairies
                             // Should be removed
                             timedOutRequests.Add(kVP.Key);
                             break;
+                        case SingleRequest.State.Impossible:
+                            // Should be removed
+                            timedOutRequests.Add(kVP.Key);
+                            break;
                         default:
                             throw new NotImplementedException();
                     }
@@ -313,6 +317,10 @@ namespace Fairies
                 default:
                     break;
             }
+
+            // Mark any pending requests that wanted the same item for cancelation
+            foreach (SingleRequest req in activeRequests.Values.Where(x => x.WantsItem(item)))
+                req.MarkImpossible();
         }
     }
 }

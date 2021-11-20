@@ -44,6 +44,8 @@ namespace Fairies
             line_timeout = new AudioLine(requester, GetPath("t"));
             line_timeout_a = new AudioLine(requester, GetPath("t_a"));
             line_timeout_b = new AudioLine(requester, GetPath("t_b"));
+
+            line_impossible = new AudioLine(requester, GetPath("i"));
         }
 
         public void Reset()
@@ -67,7 +69,7 @@ namespace Fairies
 
         float timeElapsed = 0;
 
-        public enum State { ClipsNotLoaded, Running, TimeOut }
+        public enum State { ClipsNotLoaded, Running, Impossible, TimeOut }
 
         protected void RequestLine(AudioLine audioLine) => onLineRequested?.Invoke(this, audioLine);
 
@@ -152,7 +154,16 @@ namespace Fairies
                 LogWarning("No clips!");
                 return State.ClipsNotLoaded;
             }
+
             timeElapsed += dT;
+
+            // Impossible
+            if (isImpossible)
+            {
+                RequestLine(line_impossible);
+                LogInfo("Impossible - Ending!");
+                return State.Impossible;
+            }
 
             // Done!
             if (timeElapsed >= maxDuration)
@@ -250,6 +261,8 @@ namespace Fairies
             line_timeout_a.Load();
             line_timeout_b.Load();
 
+            line_impossible.Load();
+
             clipsLoaded = true;
 
             LogInfo("Loaded Clips");
@@ -281,6 +294,8 @@ namespace Fairies
             line_timeout_a.Unload();
             line_timeout_b.Unload();
 
+            line_impossible.Unload();
+            
             LogInfo("Unloaded Clips");
         }
 
@@ -363,5 +378,20 @@ namespace Fairies
         /// Call out when the request times out (after <see cref="maxDuration"/> but only B is missing
         /// </summary>
         private AudioLine line_timeout_b;
+
+        /// <summary>
+        /// Call out when the request has been marked <see cref="isImpossible"/>
+        /// </summary>
+        private AudioLine line_impossible;
+
+        bool isImpossible = false;
+
+        internal void MarkImpossible()
+        {
+            LogWarning("Marked impossible!");
+            isImpossible = true;
+        }
+
+        internal bool WantsItem(Item item) => (item == itemA && !fulfiledA) || (item == itemB && !fulfiledB);
     }
 }

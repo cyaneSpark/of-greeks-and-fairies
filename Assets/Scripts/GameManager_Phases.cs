@@ -40,7 +40,7 @@ namespace Fairies
                 new SingleRequest(Actor.doctor, Item.alcohol, Item.glass),
                 new SingleRequest(Actor.grandma, Item.apiganos),
             } },
-            { Phase.seizure, new List<SingleRequest>()
+            { Phase.fever0, new List<SingleRequest>()
             {
                 new SingleRequest(Actor.priest, Item.basil),
                 new SingleRequest(Actor.grandma, Item.basil),
@@ -102,15 +102,7 @@ namespace Fairies
             /// </summary>
             fever,
 
-            /// <summary>
-            /// Plot Point 3
-            /// Seizure marks the final gate ; and they all have a single urgent request.
-            /// Physically hard to complete 2, impossible to complete all 3
-            /// Their attitudes also change
-            /// The thunderstorm brews up and is audible
-            /// Duration :: 1 minute
-            /// </summary>
-            seizure,
+            fever0,
 
             /// <summary>
             /// Act 3A
