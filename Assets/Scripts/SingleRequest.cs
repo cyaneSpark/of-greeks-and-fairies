@@ -6,7 +6,7 @@ namespace Fairies
     [System.Serializable]
     public class SingleRequest : BaseClass
     {
-        const float defaultDuration = 60;
+        const float defaultDuration = 120;
         const float req1_At01 = 0.33f;
         const float req2_At01 = 0.67f;
 
