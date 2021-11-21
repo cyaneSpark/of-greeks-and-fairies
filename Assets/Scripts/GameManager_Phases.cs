@@ -42,7 +42,7 @@ namespace Fairies
         {
             { Phase.tutorial, new List<SingleRequest>()
             {
-                new SingleRequest(Actor.grandma, Item.sideritis, null, 30, true), // Tutorial has no limit
+                new SingleRequest(Actor.grandma, Item.sideritis, null, 60, true), // Tutorial has no limit
             } },
             { Phase.intro, new List<SingleRequest>()
             {

@@ -191,12 +191,16 @@ PrefabInstance:
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8396339438629929782, guid: 7e369d3255d3e6542b07409d48a7b045, type: 3}
+      propertyPath: EDITOR_ONLY_fastPause
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8396339438629929782, guid: 7e369d3255d3e6542b07409d48a7b045, type: 3}
       propertyPath: EDITOR_ONLY_useTestScene
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8396339438629929782, guid: 7e369d3255d3e6542b07409d48a7b045, type: 3}
       propertyPath: EDITOR_ONLY_startFromPhase
-      value: 8
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 8396339438629929782, guid: 7e369d3255d3e6542b07409d48a7b045, type: 3}
       propertyPath: EDITOR_ONLY_doStartFromPhase
