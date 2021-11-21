@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace Fairies
 {
@@ -10,6 +11,7 @@ namespace Fairies
     {
         void HandleActorMotion(Actor actor, ActorMotion motion);
         event EventHandler<DeliveryArgs> onTryToDeliver;
+        event EventHandler<bool> onPauseToggled;
 
         public enum ActorMotion { Appear, Partial, Reject, Disappear }
 
@@ -28,8 +30,14 @@ namespace Fairies
 
     public partial class GameManager : BaseBehaviour
     {
-        public GameObject interactionManagerHolder;
+        const string sceneVR = "VR_RIG";
+#if UNITY_EDITOR
+        const string EDITOR_ONLY_sceneTEST = "Test_FLOW";
+#endif
+        const float resetAfterPauseSecs = 6;
+
         private IInteractionManager interactionManager;
+
 
         public AudioSource grandma, doctor, priest;
         public AudioSource weather, grandpa;
@@ -38,22 +46,101 @@ namespace Fairies
 
         List<AudioLine> lineRequests = new List<AudioLine>();
 
+#if UNITY_EDITOR
+        [SerializeField] bool EDITOR_ONLY_useTestScene = false;
+#endif
+
         private void Awake()
         {
             speakers.Add(Actor.grandma, grandma);
             speakers.Add(Actor.doctor, doctor);
             speakers.Add(Actor.priest, priest);
 
-            interactionManager = interactionManagerHolder.GetComponent<IInteractionManager>();
+            Reset();
+        }
+
+        private void Reset()
+        {
+            LogInfo("RESET");
+
+            // Unload VR rig
+            StopAllCoroutines();
+
+            timeInSilence = 0;
+
+            foreach (Actor actor in new List<Actor>(activeRequests.Keys))
+                TryRemoveRequest(actor);
+
+            lineRequests.Clear();
+
+            UnloadAllClips();
+
+            StartCoroutine(ResetIE());
+        }
+
+        bool isSceneLoaded = false;
+
+        private IEnumerator ResetIE()
+        {
+            string scene = sceneVR;
+
+#if UNITY_EDITOR
+            if (EDITOR_ONLY_useTestScene)
+                scene = EDITOR_ONLY_sceneTEST;
+#endif
+
+            // Drop the necessary refs
+            if (isSceneLoaded)
+            {
+                if (interactionManager != null)
+                {
+                    interactionManager.onTryToDeliver -= InteractionManager_onTryToDeliver;
+                    interactionManager.onPauseToggled -= InteractionManager_onPauseToggled;
+                    LogInfo("Disconnected from IM :: {0}", interactionManager);
+                }
+
+                // Unload
+                AsyncOperation unload = SceneManager.UnloadSceneAsync(scene);
+
+                while (!unload.isDone)
+                    yield return null;
+
+                LogInfo("Scene unloaded :: {0}", scene);
+
+                isSceneLoaded = false;
+            }
+
+            // Load
+            AsyncOperation load = SceneManager.LoadSceneAsync(scene, LoadSceneMode.Additive);
+
+            while (!load.isDone)
+                yield return null;
+
+            LogInfo("Scene loaded :: {0}", scene);
+            isSceneLoaded = true;
+
+            // Get the necessary refs
+            interactionManager = FindObjectOfType<MainInteractionManager>();
+#if UNITY_EDITOR
+            if (interactionManager == null)
+                interactionManager = FindObjectOfType<Dev.SampleInteractionManager>();
+#endif
 
             if (interactionManager == null)
-                LogError("NO INTERACTION MANAGER");
+                throw new Exception("NO INTERACTION MANAGER - CAN NOT PROCEED");
             else
+            {
                 interactionManager.onTryToDeliver += InteractionManager_onTryToDeliver;
+                interactionManager.onPauseToggled += InteractionManager_onPauseToggled;
+                LogInfo("Connected to IM :: {0}", interactionManager);
+            }
+
+            Time.timeScale = 1; // in case pause was running
 
             StartCoroutine(MonitorActiveRequestsIE());
             StartCoroutine(MonitorPendingPlayesIE());
             StartCoroutine(MonitorSilenceIE());
+            StartCoroutine(PlayIE());
         }
 
         public float minTimeBetweenSpeaking = 1;
@@ -66,29 +153,29 @@ namespace Fairies
 
         private Dictionary<Actor, SingleRequest> activeRequests = new Dictionary<Actor, SingleRequest>();
 
-        [SerializeField] private Phase currentPhase;
-        [SerializeField] private State currentState;
+        [SerializeField] private Phase DEBUG_ONLY_currentPhase;
+        [SerializeField] private State DEBUG_ONLY_currentState;
 
         enum State { StoryLines, LinesToRequests, RequestAnnouncement, RequestWaiting, PhaseEnd }
 
         List<Actor> successfulRequests = new List<Actor>();
 
-        IEnumerator Start()
+        IEnumerator PlayIE()
         {
             // Play the lines of that phase
             foreach (Phase currentPhase in (Phase[])Enum.GetValues(typeof(Phase)))
             {
 #if UNITY_EDITOR
-                if (DEBUG_ONLY_doStartFromPhase && currentPhase < DEBUG_ONLY_startFromPhase)
+                if (EDITOR_ONLY_doStartFromPhase && currentPhase < EDITOR_ONLY_startFromPhase)
                 {
                     LogWarning("EDITOR ONLY :: SKIPPING {0}", currentPhase);
                     continue;
                 }
 #endif
-                this.currentPhase = currentPhase;
+                DEBUG_ONLY_currentPhase = currentPhase;
 
                 // Load the lines of that phase
-                currentState = State.StoryLines;
+                DEBUG_ONLY_currentState = State.StoryLines;
                 AudioClip[] storyLines = Resources.LoadAll<AudioClip>(GetStoryBeatPath(currentPhase));
 
                 // Loop through them
@@ -96,11 +183,12 @@ namespace Fairies
                 {
                     // Infer the metadata
                     ClipMetaData metaData = GetClipMetaData(line);
+                    bool doParallel = false;
 
                     // Infer the branch and if it's one we should be on
                     if (metaData.branch != "")
                     {
-                        bool goodBranch = true;
+                        bool goodBranch = false;
 
                         // Successful Priest
                         if (metaData.branch == "ps")
@@ -126,6 +214,12 @@ namespace Fairies
                         else if (metaData.branch == "gf")
                             goodBranch = !successfulRequests.Contains(Actor.grandma);
 
+                        // Parallel play!
+                        else if (metaData.branch == "x")
+                        {
+                            goodBranch = true;
+                            doParallel = true;
+                        }
                         else
                         {
                             LogError("Invalid Branch :: {0}", metaData.branch);
@@ -133,7 +227,7 @@ namespace Fairies
                         }
 
                         if (goodBranch)
-                            LogInfo("Using branch {0}", metaData.branch);
+                            LogInfo("Using branch {0}{1}", metaData.branch, doParallel ? " [PARALLEL]" : "");
                         else
                         {
                             LogWarning("Skipping branch {0} | conditions not met", metaData.branch);
@@ -141,7 +235,14 @@ namespace Fairies
                         }
                     }
 
-                    // Play the sound
+                    // Play the sound (parallelly)
+                    if (doParallel)
+                    {
+                        StartCoroutine(HandleLineIE(metaData.speaker, line));
+                        continue;
+                    }
+
+                    // Play the sound (serially)
                     yield return HandleLineIE(metaData.speaker, line);
 
                     // Let it die out
@@ -150,13 +251,13 @@ namespace Fairies
                 }
 
                 // Give it a sec
-                currentState = State.LinesToRequests;
+                DEBUG_ONLY_currentState = State.LinesToRequests;
                 for (float t = 0; t < linesRequestPause; t += Time.deltaTime)
                     yield return null;
 
 
                 // Go through the requests of that phase
-                currentState = State.RequestAnnouncement;
+                DEBUG_ONLY_currentState = State.RequestAnnouncement;
                 successfulRequests.Clear();
                 foreach (SingleRequest request in requests[currentPhase])
                 {
@@ -173,7 +274,7 @@ namespace Fairies
                 }
 
                 // Wait for all the requests to play out
-                currentState = State.RequestWaiting;
+                DEBUG_ONLY_currentState = State.RequestWaiting;
                 while (activeRequests.Count > 0)
                     yield return null;
 
@@ -185,14 +286,21 @@ namespace Fairies
                     yield return null;
 
                 // Unload everything
-                foreach (SingleRequest request in requests[currentPhase])
-                    request.UnloadClips();
+                UnloadAllClips();
 
                 // Let it die out
-                currentState = State.PhaseEnd;
+                DEBUG_ONLY_currentState = State.PhaseEnd;
                 for (float t = 0; t < interPhasePause; t += Time.deltaTime)
                     yield return null;
             }
+
+            Reset();
+        }
+
+        void UnloadAllClips()
+        {
+            foreach (SingleRequest request in requests[DEBUG_ONLY_currentPhase])
+                request.UnloadClips();
         }
 
         private IEnumerator MonitorActiveRequestsIE()
@@ -229,22 +337,13 @@ namespace Fairies
                 foreach (Actor actor in timedOutRequests)
                     TryRemoveRequest(actor);
 
-#if UNITY_EDITOR
-                DEBUG_ONLY_activeRequests.Clear();
-                DEBUG_ONLY_activeRequests.AddRange(activeRequests.Values);
-#endif
-
                 yield return null;
             }
         }
 
 #if UNITY_EDITOR
-        /// <summary>
-        /// Dictionary serialization (<see cref="activeRequests"/> is problematic, use this to view
-        /// </summary>
-        List<SingleRequest> DEBUG_ONLY_activeRequests = new List<SingleRequest>();
-        [SerializeField] private bool DEBUG_ONLY_doStartFromPhase = false;
-        [SerializeField] private Phase DEBUG_ONLY_startFromPhase = Phase.fever;
+        [SerializeField] private bool EDITOR_ONLY_doStartFromPhase = false;
+        [SerializeField] private Phase EDITOR_ONLY_startFromPhase = Phase.fever;
 #endif
         private IEnumerator MonitorSilenceIE()
         {
@@ -315,6 +414,50 @@ namespace Fairies
                 yield return null;
         }
 
+        private Coroutine pauseCR;
+
+        private IEnumerator PauseIE()
+        {
+            float timeStartPause = Time.realtimeSinceStartup;
+
+            while (Time.realtimeSinceStartup - timeStartPause < resetAfterPauseSecs)
+                yield return null;
+
+            LogInfo("Pause timed out ; resetting!");
+
+            pauseCR = null;
+
+            Reset();
+        }
+
+        private void TryPause()
+        {
+            Time.timeScale = 0;
+
+            if (pauseCR != null) // was already paused?
+            {
+                LogWarning("Weird, we were already timing out our pause.. Ignoring");
+                return;
+            }
+
+            pauseCR = StartCoroutine(PauseIE());
+        }
+
+        private void TryResume()
+        {
+            Time.timeScale = 1;
+
+            if (pauseCR == null)
+            {
+                LogWarning("Weird.. we didn't have a pause time out.. Ignoring");
+                return;
+            }
+
+            // Cancel timeout
+            StopCoroutine(pauseCR);
+            pauseCR = null;
+        }
+
         private void Request_onLineRequested(object sender, AudioLine e)
         {
             LogInfo("Queued {0} for play", e);
@@ -365,7 +508,8 @@ namespace Fairies
             Actor actor = e.receiver;
             Item item = e.item;
 
-            LogInfo("TRY TO DELIVER {0} {1}", actor, item);
+            LogInfo("IM :: Try to deliver {0} {1}", actor, item);
+
             if (actor == Actor.INVALID)
             {
                 LogError("Tried delivering to an invalid Actor ; abort");
@@ -406,6 +550,16 @@ namespace Fairies
             // Mark any pending requests that wanted the same item for cancelation
             foreach (SingleRequest req in activeRequests.Values.Where(x => x.WantsItem(item)))
                 req.MarkImpossible();
+        }
+
+        private void InteractionManager_onPauseToggled(object sender, bool doPause)
+        {
+            LogInfo("IM :: Pause toggled {0}", doPause ? "ON" : "OFF");
+
+            if (doPause)
+                TryPause();
+            else
+                TryResume();
         }
     }
 }
