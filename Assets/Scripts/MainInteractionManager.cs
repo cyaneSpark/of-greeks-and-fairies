@@ -48,6 +48,8 @@ namespace Fairies
             {
                 Debug.Log("SOMEONE THREW" + item.ID + "IN ME!");
                 TryDeliver(actor, item.ID);
+                item.transform.SetParent(args.interactor.transform.GetChild(0));
+                item.GetComponent<Rigidbody>().isKinematic = true;
             }
             else
             {
@@ -76,7 +78,32 @@ namespace Fairies
                     hands[actor].transform.DOLocalMoveX(-0.4f, 0.8f).SetEase(Ease.InOutElastic);
                     break;
                 case IInteractionManager.ActorMotion.Reject:
+
                     LogInfo("ANIMATE {0} REJECT", actor);
+
+                    var targets = new List<XRBaseInteractable>();
+                    XRSocketInteractor interactor = hands[actor].GetComponent<XRSocketInteractor>();
+                    interactor.GetValidTargets(targets);
+                    interactor.socketActive = false;
+                    interactor.transform
+                        .DOLocalRotate(
+                            new Vector3(interactor.transform.eulerAngles.x, interactor.transform.eulerAngles.y, 45f),
+                            0.5f).SetDelay(2f)
+                        .OnComplete(
+                            () =>
+                            {
+                                targets[0].transform.SetParent(null);
+                                targets[0].transform.DOJump(new Vector3(0, 1, 0), 0.1f, 1, 2f)
+                                    .OnComplete(() =>
+                                    {
+                                        interactor.socketActive = true;
+                                        targets[0].GetComponent<Rigidbody>().isKinematic = false;
+                                    });
+                                interactor.transform.DOLocalRotate(
+                                    new Vector3(interactor.transform.eulerAngles.x, interactor.transform.eulerAngles.y,
+                                        0), 0.5f);
+                            });
+                    Debug.Log("THROWING IT OUT!");
                     break;
                 case IInteractionManager.ActorMotion.Disappear:
                     hands[actor].transform.DOLocalMoveX(-0.8f, 0.8f).SetEase(Ease.OutExpo).OnComplete(() =>
