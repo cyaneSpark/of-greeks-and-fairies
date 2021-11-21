@@ -66,17 +66,21 @@ namespace Fairies
                 new SingleRequest(Actor.priest, Item.basil),
                 new SingleRequest(Actor.grandma, Item.basil),
             } },
-            { Phase.delirium, new List<SingleRequest>()
+            { Phase.seizure, new List<SingleRequest>()
             {
                 new SingleRequest(Actor.doctor, Item.soda, Item.vitriol),
                 new SingleRequest(Actor.grandma, Item.gunpowder, Item.garlic),
                 new SingleRequest(Actor.priest, Item.mint, Item.sage),
             } },
-            { Phase.climax, new List<SingleRequest>()
+            { Phase.delirium, new List<SingleRequest>()
             {
                 new SingleRequest(Actor.doctor, Item.artemisian),
                 new SingleRequest(Actor.grandma, Item.turtle),
                 new SingleRequest(Actor.priest, Item.hay),
+            } },
+            { Phase.climax, new List<SingleRequest>()
+            {
+                // No requests
             } },
             { Phase.outro, new List<SingleRequest>()
             {
@@ -123,6 +127,9 @@ namespace Fairies
             /// </summary>
             fever,
 
+            /// <summary>
+            /// Some extra requests
+            /// </summary>
             fever0,
 
             /// <summary>
@@ -132,13 +139,18 @@ namespace Fairies
             /// Rain starts pouring
             /// Duration :: 5 minutes
             /// </summary>
-            delirium,
+            seizure,
 
             /// <summary>
             /// Act 3B
             /// Wind intensifies (windows trembling)
-            /// They all have a final 3-ingredient urgent request
-            /// Physically impossible to complete more than 1
+            /// They all have a final single-ingredient request
+            /// Duration :: 1 minute
+            /// </summary>
+            delirium,
+
+            /// <summary>
+            /// LINES ONLY
             /// Ends with thunder striking grandpa breath and silence
             /// Duration :: 1 minute
             /// </summary>

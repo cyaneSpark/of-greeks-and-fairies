@@ -1,3 +1,4 @@
+#if UNITY_EDITOR
 using System;
 using System.Collections.Generic;
 using UnityEngine;
@@ -21,6 +22,9 @@ namespace Fairies.Dev
         public Item dummyItem;
 
         public event EventHandler<IInteractionManager.DeliveryArgs> onTryToDeliver;
+        public event EventHandler<bool> onPauseToggled;
+
+        bool isPaused = false;
 
         private void Update()
         {
@@ -30,6 +34,11 @@ namespace Fairies.Dev
                 TryDeliver(Actor.doctor, dummyItem);
             else if (Input.GetKeyUp(KeyCode.P))
                 TryDeliver(Actor.priest, dummyItem);
+            else if (Input.GetKeyUp(KeyCode.Escape))
+            {
+                isPaused = !isPaused;
+                onPauseToggled?.Invoke(this, isPaused);
+            }
         }
 
         private void TryDeliver(Actor actor, Item item) =>
@@ -61,3 +70,4 @@ namespace Fairies.Dev
         }
     }
 }
+#endif
