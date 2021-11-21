@@ -39,9 +39,9 @@ namespace Fairies
 
         private IInteractionManager interactionManager;
 
-
-        public AudioSource grandma, doctor, priest;
-        public AudioSource weather, grandpa;
+        public AudioSource grandma, doctor, priest, grandpa;
+        public AudioSource wind, rain, rainHeavy, storm, thunderStrike;
+        private float windVol, rainVol, rainHeavyVol, stormVol;
 
         private Dictionary<Actor, AudioSource> speakers = new Dictionary<Actor, AudioSource>();
 
@@ -59,7 +59,36 @@ namespace Fairies
             speakers.Add(Actor.doctor, doctor);
             speakers.Add(Actor.priest, priest);
 
+            windVol = wind.volume;
+            rainVol = rain.volume;
+            rainHeavyVol = rainHeavy.volume;
+            stormVol = storm.volume;
+
             Reset();
+        }
+
+        private void Update()
+        {
+            if ((DEBUG_ONLY_currentPhase > Phase.tutorial && DEBUG_ONLY_currentPhase <= Phase.fever) ||
+                DEBUG_ONLY_currentPhase == Phase.outro)
+                wind.volume = Mathf.Clamp(wind.volume + Time.deltaTime * windVol, 0, windVol);
+            else
+                wind.volume = Mathf.Clamp(wind.volume - Time.deltaTime * windVol, 0, windVol);
+
+            if (DEBUG_ONLY_currentPhase > Phase.fever && DEBUG_ONLY_currentPhase <= Phase.fever0)
+                rain.volume = Mathf.Clamp(rain.volume + Time.deltaTime * rainVol, 0, rainVol);
+            else
+                rain.volume = Mathf.Clamp(rain.volume - Time.deltaTime * rainVol, 0, rainVol);
+
+            if (DEBUG_ONLY_currentPhase > Phase.fever0 && DEBUG_ONLY_currentPhase <= Phase.delirium)
+                rainHeavy.volume = Mathf.Clamp(rainHeavy.volume + Time.deltaTime * rainHeavyVol, 0, rainHeavyVol);
+            else
+                rainHeavy.volume = Mathf.Clamp(rainHeavy.volume - Time.deltaTime * rainHeavyVol, 0, rainHeavyVol);
+
+            if (DEBUG_ONLY_currentPhase > Phase.delirium && DEBUG_ONLY_currentPhase <= Phase.climax)
+                storm.volume = Mathf.Clamp(rainHeavy.volume + Time.deltaTime * stormVol, 0, stormVol);
+            else
+                storm.volume = Mathf.Clamp(rainHeavy.volume - Time.deltaTime * stormVol, 0, stormVol);
         }
 
         private void Reset()
@@ -70,6 +99,11 @@ namespace Fairies
             StopAllCoroutines();
 
             timeInSilence = 0;
+
+            wind.volume = 0;
+            rain.volume = 0;
+            rainHeavy.volume = 0;
+            storm.volume = 0;
 
             foreach (Actor actor in new List<Actor>(activeRequests.Keys))
                 TryRemoveRequest(actor);
@@ -177,6 +211,18 @@ namespace Fairies
 #endif
                 DEBUG_ONLY_currentPhase = currentPhase;
 
+                if (currentPhase == Phase.outro)
+                {
+                    thunderStrike.Play();
+                    for (float t = 0; t < .2f; t += Time.deltaTime)
+                        yield return null;
+                    grandpa.Play();
+                    yield return null;
+                    while (thunderStrike.isPlaying || grandpa.isPlaying)
+                        yield return null;
+                    for (float t = 0; t < 1; t += Time.deltaTime)
+                        yield return null;
+                }
                 // Load the lines of that phase
                 DEBUG_ONLY_currentState = State.StoryLines;
                 AudioClip[] storyLines = Resources.LoadAll<AudioClip>(GetStoryBeatPath(currentPhase));

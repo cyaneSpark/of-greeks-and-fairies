@@ -130,6 +130,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 2919989355241847906, guid: 7e369d3255d3e6542b07409d48a7b045, type: 3}
+      propertyPath: m_Volume
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 5836613260926389825, guid: 7e369d3255d3e6542b07409d48a7b045, type: 3}
       propertyPath: m_RootOrder
       value: 0
@@ -174,13 +178,25 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 6522859462315413318, guid: 7e369d3255d3e6542b07409d48a7b045, type: 3}
+      propertyPath: m_Volume
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8051982934909201348, guid: 7e369d3255d3e6542b07409d48a7b045, type: 3}
+      propertyPath: m_Volume
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8097945021083841366, guid: 7e369d3255d3e6542b07409d48a7b045, type: 3}
+      propertyPath: m_Volume
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 8396339438629929782, guid: 7e369d3255d3e6542b07409d48a7b045, type: 3}
       propertyPath: EDITOR_ONLY_useTestScene
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8396339438629929782, guid: 7e369d3255d3e6542b07409d48a7b045, type: 3}
       propertyPath: EDITOR_ONLY_startFromPhase
-      value: 6
+      value: 8
       objectReference: {fileID: 0}
     - target: {fileID: 8396339438629929782, guid: 7e369d3255d3e6542b07409d48a7b045, type: 3}
       propertyPath: EDITOR_ONLY_doStartFromPhase
