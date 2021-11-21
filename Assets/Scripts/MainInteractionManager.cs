@@ -15,6 +15,7 @@ namespace Fairies
         private Dictionary<Actor, GameObject> hands = new Dictionary<Actor, GameObject>();
 
         public event EventHandler<IInteractionManager.DeliveryArgs> onTryToDeliver;
+        public event EventHandler<bool> onPauseToggled;
 
         private void TryDeliver(Actor actor, Item item) =>
             onTryToDeliver?.Invoke(this, new IInteractionManager.DeliveryArgs(actor, item));
