@@ -34,7 +34,8 @@ namespace Fairies
 #if UNITY_EDITOR
         const string EDITOR_ONLY_sceneTEST = "Test_FLOW";
 #endif
-        const float resetAfterPauseSecs = 6;
+        const float resetAfterPauseSecs = 60;
+
 
         private IInteractionManager interactionManager;
 
@@ -48,6 +49,8 @@ namespace Fairies
 
 #if UNITY_EDITOR
         [SerializeField] bool EDITOR_ONLY_useTestScene = false;
+        [SerializeField] bool EDITOR_ONLY_fastPause = false;
+        [SerializeField] float EDITOR_ONLY_resetAfterPauseSecs_Fast = 6;
 #endif
 
         private void Awake()
@@ -419,8 +422,14 @@ namespace Fairies
         private IEnumerator PauseIE()
         {
             float timeStartPause = Time.realtimeSinceStartup;
+            float waitFor = resetAfterPauseSecs;
 
-            while (Time.realtimeSinceStartup - timeStartPause < resetAfterPauseSecs)
+#if UNITY_EDITOR
+            if (EDITOR_ONLY_fastPause)
+                waitFor = EDITOR_ONLY_resetAfterPauseSecs_Fast;
+#endif
+
+            while (Time.realtimeSinceStartup - timeStartPause < waitFor)
                 yield return null;
 
             LogInfo("Pause timed out ; resetting!");
