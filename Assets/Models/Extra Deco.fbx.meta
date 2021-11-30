@@ -3,7 +3,162 @@ guid: de5c898d4e9f12e4faed23984a640408
 ModelImporter:
   serializedVersion: 20200
   internalIDToNameTable: []
-  externalObjects: {}
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: lambert1
+    second: {fileID: 2100000, guid: 2b61c6b1a03a7144bbb614ac36743e05, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: m_Basket
+    second: {fileID: 2100000, guid: 0f35b445e38e14444a6becbebd96bcc0, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: m_Black
+    second: {fileID: 2100000, guid: ab14b79efd28a644e8c95ccbd533e45d, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: m_Brass
+    second: {fileID: 2100000, guid: f3e3c9143a4d2a34e9cd3619f5a2ce88, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: m_Carpet01
+    second: {fileID: 2100000, guid: 7934f53013f88bc42a91212d1c2206f5, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: m_Floor
+    second: {fileID: 2100000, guid: 4b095cfd4aca3b545ab0a045c7cab39b, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: m_Gold
+    second: {fileID: 2100000, guid: 15b7980a0f6fdb24a9cf452549ebed14, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: m_Greens
+    second: {fileID: 2100000, guid: 0f1d9f5433989e441abbfae357c3b253, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: m_Honey
+    second: {fileID: 2100000, guid: a08079ead14ebf049b98b91888646296, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: m_Porchelain
+    second: {fileID: 2100000, guid: 33c2db86221660f45bb36bbe574fd8f8, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: m_Portrai5
+    second: {fileID: 2100000, guid: 10a69fbccc8596b46a35f6394211eb26, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: m_Portrait1
+    second: {fileID: 2100000, guid: d9ef88b1f34297a4fb7fc282298bc112, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: m_Portrait10
+    second: {fileID: 2100000, guid: 9a0a75454a194b24ebcb9413e66d6e1e, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: m_Portrait11
+    second: {fileID: 2100000, guid: 6ef83342b73db5446992017aaeae7204, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: m_Portrait12
+    second: {fileID: 2100000, guid: 66c09b58facf1c94b9943d20f566c743, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: m_Portrait13
+    second: {fileID: 2100000, guid: 7bbb0262c35ba704b9c4f21949a29406, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: m_Portrait2
+    second: {fileID: 2100000, guid: 052f2243e0b4a7c48ae286b2f252b862, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: m_Portrait3
+    second: {fileID: 2100000, guid: 89e311f364775fc45a1411bb29efad38, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: m_Portrait4
+    second: {fileID: 2100000, guid: 57b0fe61d8d84064c8da3c4615ae993a, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: m_Portrait6
+    second: {fileID: 2100000, guid: a5a29da4110cd8444984e33614bcdc41, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: m_Portrait7
+    second: {fileID: 2100000, guid: e0683ade926a78548aa7f71ce91fb64a, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: m_Portrait8
+    second: {fileID: 2100000, guid: 9b0cdc431e6069545bd2f92741c366bb, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: m_Red
+    second: {fileID: 2100000, guid: 6fd5cd44274b020489856b1a42021543, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: m_Silver
+    second: {fileID: 2100000, guid: 8903cd9ec8ac9a44fb9a4577562d1c38, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: m_Transparent
+    second: {fileID: 2100000, guid: 48c45e32f834ed14188a2ebf85023aea, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: m_White
+    second: {fileID: 2100000, guid: 415a888471032874580c3cbd6d3d4861, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: m_Wood
+    second: {fileID: 2100000, guid: f01dbeb3c74968141a3dee937de1294e, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: m_Wood2
+    second: {fileID: 2100000, guid: 8c3147badbefbce4dbf1f5cbeda2a1b0, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: m_Wool
+    second: {fileID: 2100000, guid: 894533a091be4004f82040035f31fc44, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: m_Yellow
+    second: {fileID: 2100000, guid: d08383af39afb174582e42e8a716023f, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: m_portrait9
+    second: {fileID: 2100000, guid: 127b18d61fe0d7345b4f28f1f954d7a2, type: 2}
   materials:
     materialImportMode: 2
     materialName: 0
@@ -45,7 +200,7 @@ ModelImporter:
     importLights: 1
     fileIdsGeneration: 2
     swapUVChannels: 0
-    generateSecondaryUV: 0
+    generateSecondaryUV: 1
     useFileUnits: 1
     keepQuads: 0
     weldVertices: 1

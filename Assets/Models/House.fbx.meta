@@ -3,7 +3,27 @@ guid: 7f5407e47c929dd4597008831cbe8d87
 ModelImporter:
   serializedVersion: 20200
   internalIDToNameTable: []
-  externalObjects: {}
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: m_Floor
+    second: {fileID: 2100000, guid: 79783efa3ad25834faa0cf76778769fa, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: m_Transparent
+    second: {fileID: 2100000, guid: 6ad5960cee02c59448ec3046cdd66d63, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: m_Walls
+    second: {fileID: 2100000, guid: 650b16dcf2470af45832b0b4145d8c33, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: m_Wood2
+    second: {fileID: 2100000, guid: 6575dd00f1d64e4409249cc0e7bdc0ee, type: 2}
   materials:
     materialImportMode: 2
     materialName: 0
@@ -45,7 +65,7 @@ ModelImporter:
     importLights: 1
     fileIdsGeneration: 2
     swapUVChannels: 0
-    generateSecondaryUV: 0
+    generateSecondaryUV: 1
     useFileUnits: 1
     keepQuads: 0
     weldVertices: 1

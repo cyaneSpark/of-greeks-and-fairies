@@ -3,7 +3,37 @@ guid: 62d81df9f92ad3e4f916d5761444f729
 ModelImporter:
   serializedVersion: 20200
   internalIDToNameTable: []
-  externalObjects: {}
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: m_Basket
+    second: {fileID: 2100000, guid: b834f76f7f99a12418204da4ba7220ec, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: m_Floral
+    second: {fileID: 2100000, guid: b050a4f279073e2408042c23258893e5, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: m_Gold
+    second: {fileID: 2100000, guid: 458c5a5c62cb802459a4692efda37c0e, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: m_Hand03
+    second: {fileID: 2100000, guid: 37df1b573fa03354fbadb2cb241dc1af, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: m_White
+    second: {fileID: 2100000, guid: dbaf3b5f300ed2c4ab1dd6b625ec2109, type: 2}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: t_Floral
+    second: {fileID: 2800000, guid: 0cd6f339f63416b4b927d695a82273b3, type: 3}
   materials:
     materialImportMode: 2
     materialName: 0

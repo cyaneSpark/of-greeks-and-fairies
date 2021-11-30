@@ -3,7 +3,32 @@ guid: d939cee1e42df4d4caa3be7d1b2bdbbc
 ModelImporter:
   serializedVersion: 20200
   internalIDToNameTable: []
-  externalObjects: {}
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: m_Black
+    second: {fileID: 2100000, guid: 9b571053bb0153542b70e2f8f485fbda, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: m_BlackRope
+    second: {fileID: 2100000, guid: 7ba67ced6b23f254a866134c443db174, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: m_Gold
+    second: {fileID: 2100000, guid: 45edd66126161b04ea698d55bc485efb, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: m_Hand
+    second: {fileID: 2100000, guid: 6996263d0ce7ff347a67abb9ea08d54c, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: m_Sapphire
+    second: {fileID: 2100000, guid: f9cdcbf55b3090242b12312aa5e65193, type: 2}
   materials:
     materialImportMode: 2
     materialName: 0
